@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vale Refeição — BRASAS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy-900:#0a1628;--navy-800:#0f2035;--navy-700:#162d4a;
+  --navy-600:#1e3a5f;--navy-500:#2a4d76;--navy-400:#3d6b99;
+  --navy-300:#5a8aba;--navy-200:#89afd4;--navy-100:#c0d4e9;
+  --navy-50:#e8eff7;
+  --success-600:#15803d;--success-500:#22c55e;--success-100:#dcfce7;
+  --danger-600:#dc2626;--danger-500:#ef4444;--danger-100:#fee2e2;
+  --warning-500:#f59e0b;
+  --white:#fff;
+  --gray-50:#f8fafc;--gray-100:#f1f5f9;--gray-200:#e2e8f0;
+  --gray-300:#cbd5e1;--gray-400:#94a3b8;--gray-500:#64748b;--gray-600:#475569;
+  --font:'DM Sans',-apple-system,sans-serif;
+  --radius:14px;
+  --shadow-sm:0 1px 3px rgba(10,22,40,.06);
+  --shadow-md:0 4px 16px rgba(10,22,40,.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--gray-100);color:var(--navy-800);min-height:100vh;line-height:1.5}
+
+/* ── DEV / LOADING / ERROR SCREENS ────────────────────────── */
+.overlay {
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,var(--navy-900) 0%,var(--navy-700) 60%,var(--navy-600) 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+.overlay-card {
+  background:rgba(255,255,255,.04);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,.1);border-radius:20px;
+  padding:44px;width:100%;max-width:400px;
+}
+.brand-icon {
+  display:flex;align-items:center;justify-content:center;
+  width:56px;height:56px;border-radius:16px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);
+  margin:0 auto 14px;
+}
+.brand-title {font-size:1.35rem;font-weight:700;color:#fff;text-align:center;letter-spacing:-.01em}
+.brand-sub   {font-size:.82rem;color:var(--navy-200);text-align:center;margin-top:3px;margin-bottom:28px}
+.field-label {display:block;font-size:.72rem;font-weight:600;color:var(--navy-200);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.field-input {
+  width:100%;padding:10px 14px;
+  background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);
+  border-radius:8px;font-family:var(--font);font-size:.9rem;color:#fff;outline:none;
+  transition:border-color .15s;margin-bottom:14px;
+}
+.field-input::placeholder{color:rgba(255,255,255,.28)}
+.field-input:focus{border-color:rgba(255,255,255,.4)}
+.overlay-btn {
+  width:100%;padding:12px;margin-top:6px;
+  background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);
+  border-radius:8px;font-family:var(--font);font-size:.9rem;font-weight:700;
+  color:#fff;cursor:pointer;letter-spacing:.02em;
+  transition:background .15s,border-color .15s;
+}
+.overlay-btn:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.38)}
+.overlay-error{font-size:.8rem;color:#fca5a5;margin-top:12px;text-align:center;display:none}
+.spinner {
+  width:44px;height:44px;
+  border:3px solid rgba(255,255,255,.15);border-top-color:#fff;
+  border-radius:50%;animation:spin .75s linear infinite;margin-bottom:4px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay p  {color:var(--navy-200);font-size:.9rem;margin-top:8px}
+.error-txt  {color:#fca5a5;font-weight:600;font-size:.95rem;max-width:360px;text-align:center;padding:0 16px}
+
+/* ── MAIN APP ──────────────────────────────────────────────── */
+#screenMain {display:none;flex-direction:column;min-height:100vh}
+
+/* HEADER */
+.app-header {
+  background:var(--navy-900);
+  border-bottom:1px solid rgba(255,255,255,.06);
+  padding:14px 32px;
+  display:flex;align-items:center;gap:20px;
+  box-shadow:0 2px 16px rgba(10,22,40,.35);
+  position:sticky;top:0;z-index:100;
+}
+.header-brand {display:flex;align-items:center;gap:12px}
+.header-brand-icon {
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,var(--navy-600),var(--navy-400));
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+}
+.header-brand h1 {font-size:1rem;font-weight:700;color:#fff;letter-spacing:-.01em}
+.header-brand p  {font-size:.7rem;color:var(--navy-300);margin-top:1px}
+.header-right {margin-left:auto;display:flex;align-items:center;gap:10px}
+.period-pill {
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:7px 14px;
+}
+.period-pill span {font-size:.82rem;color:var(--navy-200);font-weight:500}
+.period-pill strong {font-size:.82rem;color:#fff;font-weight:700}
+.status-badge {
+  padding:5px 12px;border-radius:20px;
+  font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+}
+.badge-open   {background:rgba(34,197,94,.18);color:#4ade80;border:1px solid rgba(34,197,94,.25)}
+.badge-locked {background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.2)}
+.user-badge {
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:6px 14px;
+}
+.user-badge-name {font-size:.82rem;font-weight:600;color:#fff}
+.user-badge-unit {font-size:.7rem;color:var(--navy-300)}
+
+/* BODY */
+.app-body {flex:1;padding:28px 32px;max-width:1280px;width:100%;margin:0 auto}
+
+/* STAT CARDS */
+.stat-row {display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.stat-card {
+  background:var(--white);border:1px solid var(--gray-200);
+  border-radius:12px;padding:16px 20px;box-shadow:var(--shadow-sm);
+}
+.stat-label {font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--gray-400);margin-bottom:4px}
+.stat-value {font-size:1.05rem;font-weight:700;color:var(--navy-800)}
+
+/* TABS PANEL */
+.tabs-panel {
+  background:var(--white);border:1px solid var(--gray-200);
+  border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);
+}
+.tabs-nav {display:flex;border-bottom:1px solid var(--gray-200);padding:0 4px}
+.tab-btn {
+  padding:14px 20px;border:none;background:none;cursor:pointer;
+  font-family:var(--font);font-size:.88rem;font-weight:600;color:var(--gray-400);
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:color .15s,border-color .15s;display:flex;align-items:center;gap:8px;
+}
+.tab-btn:hover {color:var(--navy-700)}
+.tab-btn.active {color:var(--navy-800);border-bottom-color:var(--navy-800)}
+.tab-count {
+  background:var(--gray-100);color:var(--gray-500);
+  border-radius:20px;font-size:.7rem;font-weight:700;padding:2px 8px;
+  transition:background .15s,color .15s;
+}
+.tab-btn.active .tab-count {background:var(--navy-800);color:#fff}
+.tab-panel {display:none}
+.tab-panel.active {display:block}
+
+/* TABLE */
+.table-wrap {overflow-x:auto}
+table {width:100%;border-collapse:collapse;font-size:.84rem}
+thead th {
+  font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--gray-400);padding:10px 14px;text-align:center;
+  background:var(--gray-50);border-bottom:1px solid var(--gray-100);white-space:nowrap;
+}
+thead th.left {text-align:left}
+.th-group {
+  background:var(--navy-800) !important;color:rgba(255,255,255,.65) !important;
+  font-size:.63rem !important;padding:7px 14px !important;letter-spacing:.1em;
+}
+tbody tr {transition:background .1s}
+tbody tr:hover {background:var(--gray-50)}
+tbody tr:not(:last-child) td {border-bottom:1px solid var(--gray-100)}
+td {padding:10px 14px;vertical-align:middle}
+td.name {font-weight:600;color:var(--navy-800);min-width:200px}
+td.mat  {font-size:.77rem;color:var(--gray-400);white-space:nowrap;min-width:88px}
+td.num  {text-align:center}
+.no-data {text-align:center;padding:56px 24px;color:var(--gray-400);font-style:italic;font-size:.88rem}
+
+/* INPUTS */
+input[type=number] {
+  width:66px;padding:6px 8px;
+  border:1px solid var(--gray-200);border-radius:7px;
+  text-align:center;font-family:var(--font);font-size:.84rem;color:var(--navy-800);
+  background:var(--white);transition:border-color .15s,box-shadow .15s;
+  -moz-appearance:textfield;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none}
+input[type=number]:focus {
+  outline:none;border-color:var(--navy-500);
+  box-shadow:0 0 0 3px rgba(42,77,118,.12);
+}
+input[type=number]:disabled {
+  background:var(--gray-100);color:var(--gray-300);
+  border-color:var(--gray-200);cursor:not-allowed;
+}
+
+/* MANUAL ROW INPUTS */
+.txt-inp {
+  border:1px solid var(--gray-200);border-radius:7px;
+  padding:6px 8px;font-family:var(--font);font-size:.84rem;color:var(--navy-800);
+  background:var(--white);outline:none;transition:border-color .15s,box-shadow .15s;
+}
+.txt-inp:focus {border-color:var(--navy-500);box-shadow:0 0 0 3px rgba(42,77,118,.12)}
+.txt-inp.w-full {width:100%;min-width:160px}
+.txt-inp.w-mat  {width:90px}
+.del-btn {
+  border:1px solid var(--gray-200);background:var(--white);color:var(--gray-400);
+  border-radius:6px;padding:4px 10px;font-size:.9rem;cursor:pointer;
+  transition:all .15s;line-height:1;
+}
+.del-btn:hover {background:var(--danger-100);border-color:var(--danger-500);color:var(--danger-600)}
+.add-row-btn {
+  display:flex;align-items:center;gap:8px;width:calc(100% - 32px);
+  border:1.5px dashed var(--gray-300);background:transparent;color:var(--gray-500);
+  border-radius:8px;padding:10px 20px;margin:12px 16px;
+  font-family:var(--font);font-size:.84rem;font-weight:600;cursor:pointer;
+  transition:all .15s;
+}
+.add-row-btn:hover {border-color:var(--navy-400);color:var(--navy-600);background:var(--navy-50)}
+.manual-row td {background:rgba(42,77,118,.03)}
+.emp-sel {
+  width:100%;min-width:180px;padding:6px 8px;
+  border:1px solid var(--gray-200);border-radius:7px;
+  font-family:var(--font);font-size:.84rem;color:var(--navy-800);
+  background:var(--white);outline:none;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s;
+}
+.emp-sel:focus {border-color:var(--navy-500);box-shadow:0 0 0 3px rgba(42,77,118,.12)}
+.mat-disp {font-size:.77rem;color:var(--gray-400)}
+
+/* FOOTER */
+.app-footer {
+  padding:20px 32px;max-width:1280px;width:100%;margin:0 auto;
+  display:flex;align-items:center;justify-content:flex-end;gap:14px;
+}
+.save-btn {
+  background:var(--navy-800);color:#fff;border:none;
+  padding:11px 28px;border-radius:8px;font-family:var(--font);
+  font-size:.9rem;font-weight:700;cursor:pointer;letter-spacing:.01em;
+  transition:background .15s;
+}
+.save-btn:hover:not(:disabled){background:var(--navy-600)}
+.save-btn:disabled{opacity:.45;cursor:not-allowed}
+.status-msg {
+  font-size:.84rem;font-weight:600;padding:8px 16px;border-radius:8px;display:none;
+}
+.status-msg.success{background:var(--success-100);color:var(--success-600);display:block}
+.status-msg.error  {background:var(--danger-100);color:var(--danger-600);display:block}
+.status-msg.saving {background:var(--navy-50);color:var(--navy-600);display:block}
+.lock-notice {
+  background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);
+  border-radius:8px;padding:9px 16px;color:var(--danger-600);
+  font-size:.82rem;font-weight:600;margin-right:auto;
+}
+
+@media(max-width:900px){
+  .app-header{padding:12px 16px}
+  .app-body,.app-footer{padding-left:16px;padding-right:16px}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .header-right .period-pill{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ── DEV LOGIN ─────────────────────────────────────────── -->
+<div id="screenDev" class="overlay" style="display:none">
+  <div class="overlay-card">
+    <div class="brand-icon">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+        <rect x="2" y="19" width="7" height="11" rx="2" fill="rgba(255,255,255,.45)"/>
+        <rect x="12.5" y="12" width="7" height="18" rx="2" fill="rgba(255,255,255,.7)"/>
+        <rect x="23" y="5" width="7" height="25" rx="2" fill="#fff"/>
+        <path d="M5.5 17L16 10L26.5 3.5" stroke="rgba(255,255,255,.35)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="3 2.5"/>
+      </svg>
+    </div>
+    <div class="brand-title">Vale Refeição</div>
+    <div class="brand-sub">Modo desenvolvimento — BRASAS BI</div>
+    <label class="field-label">Seu nome</label>
+    <input id="devNome" class="field-input" type="text" placeholder="Ex: Maria Silva">
+    <label class="field-label">Unidade</label>
+    <input id="devUnidade" class="field-input" type="text" placeholder="Ex: Recife" onkeydown="if(event.key==='Enter') devLogin()">
+    <button class="overlay-btn" onclick="devLogin()">Entrar</button>
+    <div class="overlay-error" id="devErr">Preencha nome e unidade.</div>
+  </div>
+</div>
+
+<!-- ── LOADING ───────────────────────────────────────────── -->
+<div id="screenLoading" class="overlay" style="display:none">
+  <div class="spinner"></div>
+  <p>Carregando...</p>
+</div>
+
+<!-- ── ERRO ─────────────────────────────────────────────── -->
+<div id="screenError" class="overlay" style="display:none">
+  <div class="error-txt" id="errorMsg"></div>
+</div>
+
+<!-- ── MAIN APP ──────────────────────────────────────────── -->
+<div id="screenMain">
+
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="header-brand-icon">🍽️</div>
+      <div>
+        <h1>Vale Refeição</h1>
+        <p>BRASAS BI</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="period-pill">
+        <span>Período</span>
+        <strong id="hPeriodo">—</strong>
+      </div>
+      <span id="hBadge" class="status-badge" style="display:none"></span>
+      <div class="user-badge">
+        <div>
+          <div class="user-badge-name" id="hNome">—</div>
+          <div class="user-badge-unit" id="hUnidade">—</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+
+    <!-- Stat cards -->
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-label">Unidade</div>
+        <div class="stat-value" id="sUnidade">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Período de referência</div>
+        <div class="stat-value" id="sPeriodo">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total de funcionários</div>
+        <div class="stat-value" id="sTotal">—</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-panel">
+      <div class="tabs-nav">
+        <button class="tab-btn active" onclick="switchTab('admin')">
+          Administrativo <span class="tab-count" id="cAdmin">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('docente')">
+          Docente <span class="tab-count" id="cDocente">0</span>
+        </button>
+      </div>
+
+      <!-- Administrativo -->
+      <div id="tabAdmin" class="tab-panel active">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="left" rowspan="2">Nome</th>
+                <th class="left" rowspan="2">Matrícula</th>
+                <th colspan="3" class="th-group">Previsto</th>
+                <th colspan="3" class="th-group">Efetivo</th>
+                <th rowspan="2"></th>
+              </tr>
+              <tr>
+                <th>8hs</th><th>6hs</th><th>Sáb</th>
+                <th>8hs</th><th>6hs</th><th>Sáb</th>
+              </tr>
+            </thead>
+            <tbody id="bodyAdmin">
+              <tr id="adminEmpty"><td colspan="9" class="no-data">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="add-row-btn" id="addAdminBtn" onclick="addRow('admin')" style="display:none">
+          + Adicionar funcionário administrativo
+        </button>
+      </div>
+
+      <!-- Docente -->
+      <div id="tabDocente" class="tab-panel">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="left" rowspan="2">Nome</th>
+                <th class="left" rowspan="2">Matrícula</th>
+                <th colspan="2" class="th-group">Carga Horária</th>
+                <th colspan="2" class="th-group">Dias Trabalhados</th>
+                <th rowspan="2"></th>
+              </tr>
+              <tr>
+                <th>CH Previsto</th><th>CH Efetivo</th>
+                <th>Previsto</th><th>Efetivo</th>
+              </tr>
+            </thead>
+            <tbody id="bodyDocente">
+              <tr id="docenteEmpty"><td colspan="7" class="no-data">Carregando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="add-row-btn" id="addDocenteBtn" onclick="addRow('docente')" style="display:none">
+          + Adicionar docente
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /app-body -->
+
+  <footer class="app-footer">
+    <span id="statusMsg" class="status-msg"></span>
+    <div id="lockNotice" class="lock-notice" style="display:none">
+      Prazo encerrado — formulário somente para visualização
+    </div>
+    <button id="saveBtn" class="save-btn" onclick="saveData()" style="display:none">
+      Salvar dados
+    </button>
+  </footer>
+
+</div><!-- /screenMain -->
+
+<script>
+var TOKEN = '<?= token ?>';
+
+var state = { user: null, period: null, funcs: null, vrData: null, counter: 0 };
+
+var MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+             'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+// ── INIT ────────────────────────────────────────────────────
+
+window.onload = function() {
+  if (!TOKEN) {
+    show('screenDev');
+  } else {
+    show('screenLoading');
+    google.script.run
+      .withSuccessHandler(onUserLoaded)
+      .withFailureHandler(showError)
+      .getUserFromHub(TOKEN);
+  }
+};
+
+function devLogin() {
+  var nome    = document.getElementById('devNome').value.trim();
+  var unidade = document.getElementById('devUnidade').value.trim();
+  var errEl   = document.getElementById('devErr');
+  if (!nome || !unidade) { errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+  show('screenLoading');
+  onUserLoaded({ email: 'dev@brasas.com', nome: nome, role: 'dev', unidade: unidade });
+}
+
+function onUserLoaded(user) {
+  state.user = user;
+  google.script.run
+    .withSuccessHandler(onPeriodLoaded)
+    .withFailureHandler(showError)
+    .getCurrentPeriod();
+}
+
+function onPeriodLoaded(period) {
+  state.period = period;
+  google.script.run
+    .withSuccessHandler(onFuncsLoaded)
+    .withFailureHandler(showError)
+    .getFuncionarios(state.user.unidade);
+}
+
+function onFuncsLoaded(funcs) {
+  state.funcs = funcs;
+  google.script.run
+    .withSuccessHandler(onVRLoaded)
+    .withFailureHandler(showError)
+    .getVRData(state.user.unidade, state.period.mes, state.period.ano);
+}
+
+function onVRLoaded(vrData) {
+  state.vrData = vrData;
+  renderUI();
+}
+
+// ── RENDER ──────────────────────────────────────────────────
+
+function renderUI() {
+  var u = state.user;
+  var p = state.period;
+  var total = state.funcs.administrativo.length + state.funcs.docente.length;
+  var periodoStr = MESES[p.mes - 1] + ' / ' + p.ano;
+
+  // Header
+  document.getElementById('hPeriodo').textContent = periodoStr;
+  document.getElementById('hNome').textContent    = u.nome;
+  document.getElementById('hUnidade').textContent = u.unidade;
+
+  var badge = document.getElementById('hBadge');
+  badge.style.display = '';
+  if (p.locked) {
+    badge.textContent = 'Bloqueado';
+    badge.className   = 'status-badge badge-locked';
+    document.getElementById('lockNotice').style.display = '';
+  } else {
+    badge.textContent = 'Aberto';
+    badge.className   = 'status-badge badge-open';
+    document.getElementById('saveBtn').style.display     = '';
+    document.getElementById('addAdminBtn').style.display   = '';
+    document.getElementById('addDocenteBtn').style.display = '';
+  }
+
+  // Stat cards
+  document.getElementById('sUnidade').textContent = u.unidade;
+  document.getElementById('sPeriodo').textContent = periodoStr;
+  document.getElementById('sTotal').textContent   = total;
+
+  // Tab counts
+  document.getElementById('cAdmin').textContent   = state.funcs.administrativo.length;
+  document.getElementById('cDocente').textContent = state.funcs.docente.length;
+
+  renderAdminTable();
+  renderDocenteTable();
+
+  hideAll();
+  document.getElementById('screenMain').style.display = 'flex';
+}
+
+function renderAdminTable() {
+  var tbody  = document.getElementById('bodyAdmin');
+  var emps   = state.funcs.administrativo;
+  var map    = state.vrData.adminMap;
+  var locked = state.period.locked;
+  var dis    = locked ? 'disabled' : '';
+
+  if (!emps.length) {
+    tbody.innerHTML = '<tr id="adminEmpty"><td colspan="9" class="no-data">Nenhum funcionário carregado — use o botão abaixo para adicionar.</td></tr>';
+    return;
+  }
+  var html = '';
+  emps.forEach(function(emp) {
+    var d = map[emp.matricula] || {};
+    html += '<tr>' +
+      '<td class="name">' + esc(emp.nome) + '</td>' +
+      '<td class="mat">'  + esc(emp.matricula) + '</td>' +
+      num('a_p8_' + emp.matricula, d.previsto8hs, dis) +
+      num('a_p6_' + emp.matricula, d.previsto6hs, dis) +
+      num('a_ps_' + emp.matricula, d.previstoSab, dis) +
+      num('a_e8_' + emp.matricula, d.efetivo8hs,  dis) +
+      num('a_e6_' + emp.matricula, d.efetivo6hs,  dis) +
+      num('a_es_' + emp.matricula, d.efetivoSab,  dis) +
+      '<td></td></tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function renderDocenteTable() {
+  var tbody  = document.getElementById('bodyDocente');
+  var emps   = state.funcs.docente;
+  var map    = state.vrData.docenteMap;
+  var locked = state.period.locked;
+  var dis    = locked ? 'disabled' : '';
+
+  if (!emps.length) {
+    tbody.innerHTML = '<tr id="docenteEmpty"><td colspan="7" class="no-data">Nenhum docente carregado — use o botão abaixo para adicionar.</td></tr>';
+    return;
+  }
+  var html = '';
+  emps.forEach(function(emp) {
+    var d = map[emp.matricula] || {};
+    html += '<tr>' +
+      '<td class="name">' + esc(emp.nome) + '</td>' +
+      '<td class="mat">'  + esc(emp.matricula) + '</td>' +
+      num('d_chp_' + emp.matricula, d.chPrevisto,   dis) +
+      num('d_che_' + emp.matricula, d.chEfetivo,    dis) +
+      num('d_dp_'  + emp.matricula, d.diasPrevisto, dis) +
+      num('d_de_'  + emp.matricula, d.diasEfetivo,  dis) +
+      '<td></td></tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+function num(id, val, disabled) {
+  var v = (val !== undefined && val !== null && val !== '') ? Number(val) : 0;
+  return '<td class="num"><input type="number" id="' + id +
+         '" value="' + v + '" min="0" step="1" ' + disabled + '></td>';
+}
+
+// ── ADD / REMOVE ROWS ────────────────────────────────────────
+
+function addRow(type) {
+  var k       = ++state.counter;
+  var isAdmin = type === 'admin';
+  var prefix  = isAdmin ? 'a' : 'd';
+  var tbody   = document.getElementById(isAdmin ? 'bodyAdmin' : 'bodyDocente');
+
+  var emptyRow = document.getElementById(isAdmin ? 'adminEmpty' : 'docenteEmpty');
+  if (emptyRow) emptyRow.remove();
+
+  var emps = isAdmin ? state.funcs.administrativo : state.funcs.docente;
+
+  // Build name/mat cells
+  var nameCell, matCell;
+  if (emps.length > 0) {
+    var opts = '<option value="">— Selecione o funcionário —</option>';
+    emps.forEach(function(emp) {
+      opts += '<option value="' + esc(emp.matricula) + '" data-nome="' + esc(emp.nome) + '">' + esc(emp.nome) + '</option>';
+    });
+    nameCell = '<td class="name"><select class="emp-sel" id="' + prefix + '_sel_' + k +
+               '" onchange="onEmpSelect(\'' + type + '\',' + k + ')">' + opts + '</select></td>';
+    matCell  = '<td class="mat"><span class="mat-disp" id="' + prefix + '_mat_disp_' + k + '">—</span></td>';
+  } else {
+    // Fallback: text inputs when no employees loaded from spreadsheet
+    nameCell = '<td class="name"><input type="text" class="txt-inp w-full" id="' + prefix + '_nome_txt_' + k + '" placeholder="Nome completo"></td>';
+    matCell  = '<td class="mat"><input type="text" class="txt-inp w-mat" id="' + prefix + '_mat_txt_' + k + '" placeholder="Matrícula"></td>';
+  }
+
+  var tr = document.createElement('tr');
+  tr.className   = 'manual-row';
+  tr.dataset.key  = k;
+  tr.dataset.nome = '';
+  tr.dataset.mat  = '';
+
+  if (isAdmin) {
+    tr.innerHTML = nameCell + matCell +
+      '<td class="num"><input type="number" id="a_p8_'+k+'" value="0" min="0" step="1"></td>' +
+      '<td class="num"><input type="number" id="a_p6_'+k+'" value="0" min="0" step="1"></td>' +
+      '<td class="num"><input type="number" id="a_ps_'+k+'" value="0" min="0" step="1"></td>' +
+      '<td class="num"><input type="number" id="a_e8_'+k+'" value="0" min="0" step="1"></td>' +
+      '<td class="num"><input type="number" id="a_e6_'+k+'" value="0" min="0" step="1"></td>' +
+      '<td class="num"><input type="number" id="a_es_'+k+'" value="0" min="0" step="1"></td>' +
+      '<td><button class="del-btn" onclick="removeRow(this,\'admin\')">×</button></td>';
+  } else {
+    tr.innerHTML = nameCell + matCell +
+      '<td class="num"><input type="number" id="d_chp_'+k+'" value="0" min="0" step="1"></td>' +
+      '<td class="num"><input type="number" id="d_che_'+k+'" value="0" min="0" step="1"></td>' +
+      '<td class="num"><input type="number" id="d_dp_'+k+'" value="0" min="0" step="1"></td>' +
+      '<td class="num"><input type="number" id="d_de_'+k+'" value="0" min="0" step="1"></td>' +
+      '<td><button class="del-btn" onclick="removeRow(this,\'docente\')">×</button></td>';
+  }
+
+  tbody.appendChild(tr);
+  updateTotal();
+}
+
+function onEmpSelect(type, k) {
+  var prefix = type === 'admin' ? 'a' : 'd';
+  var sel    = document.getElementById(prefix + '_sel_' + k);
+  if (!sel) return;
+  var opt  = sel.options[sel.selectedIndex];
+  var nome = opt.getAttribute('data-nome') || '';
+  var mat  = opt.value || '';
+
+  var tr = sel.closest('tr');
+  tr.dataset.nome = nome;
+  tr.dataset.mat  = mat;
+
+  var disp = document.getElementById(prefix + '_mat_disp_' + k);
+  if (disp) {
+    disp.textContent  = mat || '—';
+    disp.style.color  = mat ? 'var(--gray-400)' : 'var(--gray-300)';
+  }
+}
+
+function removeRow(btn, type) {
+  var tr     = btn.closest('tr');
+  var tbody  = tr.parentNode;
+  tr.remove();
+
+  // If no rows remain (loaded + manual), restore the empty-state row
+  if (!tbody.querySelector('tr')) {
+    var isAdmin = type === 'admin';
+    var cols    = isAdmin ? 9 : 7;
+    var emptyId = isAdmin ? 'adminEmpty' : 'docenteEmpty';
+    var emptyTr = document.createElement('tr');
+    emptyTr.id  = emptyId;
+    emptyTr.innerHTML = '<td colspan="' + cols + '" class="no-data">Nenhum funcionário carregado — use o botão abaixo para adicionar.</td>';
+    tbody.appendChild(emptyTr);
+  }
+  updateTotal();
+}
+
+function updateTotal() {
+  var adminLoaded   = state.funcs ? state.funcs.administrativo.length : 0;
+  var docenteLoaded = state.funcs ? state.funcs.docente.length : 0;
+  var adminManual   = document.querySelectorAll('#bodyAdmin .manual-row').length;
+  var docenteManual = document.querySelectorAll('#bodyDocente .manual-row').length;
+  document.getElementById('cAdmin').textContent   = adminLoaded + adminManual;
+  document.getElementById('cDocente').textContent = docenteLoaded + docenteManual;
+  document.getElementById('sTotal').textContent   = adminLoaded + docenteLoaded + adminManual + docenteManual;
+}
+
+// ── TABS ────────────────────────────────────────────────────
+
+function switchTab(tab) {
+  var btns   = document.querySelectorAll('.tab-btn');
+  var panels = document.querySelectorAll('.tab-panel');
+  btns.forEach(function(b)   { b.classList.remove('active'); });
+  panels.forEach(function(p) { p.classList.remove('active'); });
+  if (tab === 'admin') {
+    btns[0].classList.add('active');
+    document.getElementById('tabAdmin').classList.add('active');
+  } else {
+    btns[1].classList.add('active');
+    document.getElementById('tabDocente').classList.add('active');
+  }
+}
+
+// ── SAVE ────────────────────────────────────────────────────
+
+function saveData() {
+  setStatus('Salvando...', 'saving');
+  document.getElementById('saveBtn').disabled = true;
+
+  // Loaded employees
+  var adminEmps = state.funcs.administrativo.map(function(emp) {
+    return {
+      matricula: emp.matricula, nome: emp.nome,
+      previsto8hs: val('a_p8_' + emp.matricula),
+      previsto6hs: val('a_p6_' + emp.matricula),
+      previstoSab: val('a_ps_' + emp.matricula),
+      efetivo8hs:  val('a_e8_' + emp.matricula),
+      efetivo6hs:  val('a_e6_' + emp.matricula),
+      efetivoSab:  val('a_es_' + emp.matricula)
+    };
+  });
+
+  // Manually added admin rows
+  document.querySelectorAll('#bodyAdmin .manual-row').forEach(function(tr) {
+    var k    = tr.dataset.key;
+    var nome = tr.dataset.nome || '';
+    var mat  = tr.dataset.mat  || '';
+    // Fallback to text inputs (when no dropdown was available)
+    if (!nome) { var ni = document.getElementById('a_nome_txt_' + k); nome = ni ? ni.value.trim() : ''; }
+    if (!mat)  { var mi = document.getElementById('a_mat_txt_'  + k); mat  = mi ? mi.value.trim() : ''; }
+    if (!nome || !mat) return;
+    adminEmps.push({
+      matricula: mat, nome: nome,
+      previsto8hs: val('a_p8_' + k), previsto6hs: val('a_p6_' + k),
+      previstoSab: val('a_ps_' + k), efetivo8hs:  val('a_e8_' + k),
+      efetivo6hs:  val('a_e6_' + k), efetivoSab:  val('a_es_' + k)
+    });
+  });
+
+  // Loaded docentes
+  var docenteEmps = state.funcs.docente.map(function(emp) {
+    return {
+      matricula: emp.matricula, nome: emp.nome,
+      chPrevisto:   val('d_chp_' + emp.matricula),
+      chEfetivo:    val('d_che_' + emp.matricula),
+      diasPrevisto: val('d_dp_'  + emp.matricula),
+      diasEfetivo:  val('d_de_'  + emp.matricula)
+    };
+  });
+
+  // Manually added docente rows
+  document.querySelectorAll('#bodyDocente .manual-row').forEach(function(tr) {
+    var k    = tr.dataset.key;
+    var nome = tr.dataset.nome || '';
+    var mat  = tr.dataset.mat  || '';
+    if (!nome) { var ni = document.getElementById('d_nome_txt_' + k); nome = ni ? ni.value.trim() : ''; }
+    if (!mat)  { var mi = document.getElementById('d_mat_txt_'  + k); mat  = mi ? mi.value.trim() : ''; }
+    if (!nome || !mat) return;
+    docenteEmps.push({
+      matricula: mat, nome: nome,
+      chPrevisto:   val('d_chp_' + k), chEfetivo:    val('d_che_' + k),
+      diasPrevisto: val('d_dp_'  + k), diasEfetivo:  val('d_de_'  + k)
+    });
+  });
+
+  google.script.run
+    .withSuccessHandler(function() {
+      setStatus('Dados salvos com sucesso!', 'success');
+      document.getElementById('saveBtn').disabled = false;
+    })
+    .withFailureHandler(function(err) {
+      setStatus('Erro: ' + (err.message || err), 'error');
+      document.getElementById('saveBtn').disabled = false;
+    })
+    .saveVRData({
+      unidade: state.user.unidade,
+      mes:     state.period.mes,
+      ano:     state.period.ano,
+      administrativo: adminEmps,
+      docente:        docenteEmps
+    });
+}
+
+// ── UTILS ───────────────────────────────────────────────────
+
+function val(id) {
+  var el = document.getElementById(id);
+  return el ? (Number(el.value) || 0) : 0;
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function show(id) {
+  hideAll();
+  var el = document.getElementById(id);
+  if (el) el.style.display = (id === 'screenMain') ? 'flex' : '';
+}
+
+function hideAll() {
+  ['screenDev','screenLoading','screenError','screenMain'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+}
+
+function setStatus(msg, type) {
+  var el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className   = 'status-msg ' + type;
+}
+
+function showError(err) {
+  show('screenError');
+  document.getElementById('errorMsg').textContent =
+    (err && err.message) ? err.message : String(err);
+}
+</script>
+</body>
+</html>
