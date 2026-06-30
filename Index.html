@@ -93,6 +93,14 @@ body{font-family:var(--font);background:var(--gray-100);color:var(--navy-800);mi
 .header-brand h1 {font-size:1rem;font-weight:700;color:#fff;letter-spacing:-.01em}
 .header-brand p  {font-size:.7rem;color:var(--navy-300);margin-top:1px}
 .header-right {margin-left:auto;display:flex;align-items:center;gap:10px}
+.hub-back-btn {
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;padding:6px 13px;
+  font-size:.8rem;font-weight:600;color:var(--navy-200);
+  text-decoration:none;transition:background .15s,color .15s;white-space:nowrap;
+}
+.hub-back-btn:hover{background:rgba(255,255,255,.14);color:#fff}
 .period-pill {
   display:flex;align-items:center;gap:6px;
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
@@ -149,31 +157,57 @@ body{font-family:var(--font);background:var(--gray-100);color:var(--navy-800);mi
 .tab-panel {display:none}
 .tab-panel.active {display:block}
 
-/* TABLE */
-.table-wrap {overflow-x:auto}
-table {width:100%;border-collapse:collapse;font-size:.84rem}
-thead th {
-  font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
-  color:var(--gray-400);padding:10px 14px;text-align:center;
-  background:var(--gray-50);border-bottom:1px solid var(--gray-100);white-space:nowrap;
+/* ── SELECTOR BAR ──────────────────────────────────────────── */
+.selector-bar {
+  display:flex;align-items:flex-end;gap:14px;
+  padding:20px 20px 0;flex-wrap:wrap;
 }
-thead th.left {text-align:left}
-.th-group {
-  background:var(--navy-800) !important;color:rgba(255,255,255,.65) !important;
-  font-size:.63rem !important;padding:7px 14px !important;letter-spacing:.1em;
+.selector-label {
+  display:block;font-size:.67rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--gray-400);margin-bottom:6px;
 }
-tbody tr {transition:background .1s}
-tbody tr:hover {background:var(--gray-50)}
-tbody tr:not(:last-child) td {border-bottom:1px solid var(--gray-100)}
-td {padding:10px 14px;vertical-align:middle}
-td.name {font-weight:600;color:var(--navy-800);min-width:200px}
-td.mat  {font-size:.77rem;color:var(--gray-400);white-space:nowrap;min-width:88px}
-td.num  {text-align:center}
-.no-data {text-align:center;padding:56px 24px;color:var(--gray-400);font-style:italic;font-size:.88rem}
+.emp-dropdown {
+  min-width:300px;padding:9px 12px;
+  border:1.5px solid var(--gray-200);border-radius:8px;
+  font-family:var(--font);font-size:.88rem;color:var(--navy-800);
+  background:var(--white);outline:none;cursor:pointer;
+  transition:border-color .15s,box-shadow .15s;
+}
+.emp-dropdown:focus {border-color:var(--navy-500);box-shadow:0 0 0 3px rgba(42,77,118,.12)}
+.emp-dropdown:disabled {background:var(--gray-100);color:var(--gray-400);cursor:not-allowed}
 
-/* INPUTS */
+/* ── NO SELECTION HINT ─────────────────────────────────────── */
+.no-sel-hint {
+  text-align:center;padding:52px 24px;color:var(--gray-400);
+  font-size:.88rem;font-style:italic;
+}
+
+/* ── EMPLOYEE FORM CARD ────────────────────────────────────── */
+.emp-form-card {
+  margin:20px;border:1.5px solid var(--gray-200);border-radius:10px;overflow:hidden;
+}
+.form-card-header {
+  background:var(--gray-50);border-bottom:1px solid var(--gray-200);
+  padding:14px 20px;
+}
+.form-emp-name {font-size:.95rem;font-weight:700;color:var(--navy-800)}
+.form-emp-mat  {font-size:.77rem;color:var(--gray-400);margin-top:3px}
+.form-body {padding:24px 20px;display:flex;gap:40px;flex-wrap:wrap}
+.field-group {flex:1;min-width:150px}
+.field-group-title {
+  display:inline-block;font-size:.63rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.1em;color:#fff;background:var(--navy-800);
+  padding:5px 12px;border-radius:5px;margin-bottom:14px;
+}
+.field-row {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-bottom:10px;
+}
+.field-lbl {font-size:.84rem;color:var(--gray-600);font-weight:500;min-width:60px}
+
+/* NUMBER INPUTS */
 input[type=number] {
-  width:66px;padding:6px 8px;
+  width:80px;padding:6px 8px;
   border:1px solid var(--gray-200);border-radius:7px;
   text-align:center;font-family:var(--font);font-size:.84rem;color:var(--navy-800);
   background:var(--white);transition:border-color .15s,box-shadow .15s;
@@ -190,39 +224,6 @@ input[type=number]:disabled {
   border-color:var(--gray-200);cursor:not-allowed;
 }
 
-/* MANUAL ROW INPUTS */
-.txt-inp {
-  border:1px solid var(--gray-200);border-radius:7px;
-  padding:6px 8px;font-family:var(--font);font-size:.84rem;color:var(--navy-800);
-  background:var(--white);outline:none;transition:border-color .15s,box-shadow .15s;
-}
-.txt-inp:focus {border-color:var(--navy-500);box-shadow:0 0 0 3px rgba(42,77,118,.12)}
-.txt-inp.w-full {width:100%;min-width:160px}
-.txt-inp.w-mat  {width:90px}
-.del-btn {
-  border:1px solid var(--gray-200);background:var(--white);color:var(--gray-400);
-  border-radius:6px;padding:4px 10px;font-size:.9rem;cursor:pointer;
-  transition:all .15s;line-height:1;
-}
-.del-btn:hover {background:var(--danger-100);border-color:var(--danger-500);color:var(--danger-600)}
-.add-row-btn {
-  display:flex;align-items:center;gap:8px;width:calc(100% - 32px);
-  border:1.5px dashed var(--gray-300);background:transparent;color:var(--gray-500);
-  border-radius:8px;padding:10px 20px;margin:12px 16px;
-  font-family:var(--font);font-size:.84rem;font-weight:600;cursor:pointer;
-  transition:all .15s;
-}
-.add-row-btn:hover {border-color:var(--navy-400);color:var(--navy-600);background:var(--navy-50)}
-.manual-row td {background:rgba(42,77,118,.03)}
-.emp-sel {
-  width:100%;min-width:180px;padding:6px 8px;
-  border:1px solid var(--gray-200);border-radius:7px;
-  font-family:var(--font);font-size:.84rem;color:var(--navy-800);
-  background:var(--white);outline:none;cursor:pointer;
-  transition:border-color .15s,box-shadow .15s;
-}
-.emp-sel:focus {border-color:var(--navy-500);box-shadow:0 0 0 3px rgba(42,77,118,.12)}
-.mat-disp {font-size:.77rem;color:var(--gray-400)}
 
 /* FOOTER */
 .app-footer {
@@ -249,11 +250,29 @@ input[type=number]:disabled {
   font-size:.82rem;font-weight:600;margin-right:auto;
 }
 
+/* UNIT SELECT (no stat card de Unidade) */
+.unit-select {
+  width:100%;border:none;background:none;
+  font-family:var(--font);font-size:1.05rem;font-weight:700;
+  color:var(--navy-800);cursor:pointer;outline:none;padding:0;
+}
+.unit-select:focus{outline:none}
+
+/* UNIT BAR (dentro do painel, acima das abas) */
+.unit-bar {
+  padding:16px 20px 0;
+  border-bottom:1px solid var(--gray-200);
+  padding-bottom:16px;
+  background:var(--gray-50);
+}
+
 @media(max-width:900px){
   .app-header{padding:12px 16px}
   .app-body,.app-footer{padding-left:16px;padding-right:16px}
   .stat-row{grid-template-columns:1fr 1fr}
   .header-right .period-pill{display:none}
+  .emp-dropdown{min-width:220px}
+  .form-body{gap:24px}
 }
 </style>
 </head>
@@ -287,6 +306,7 @@ input[type=number]:disabled {
   <p>Carregando...</p>
 </div>
 
+
 <!-- ── ERRO ─────────────────────────────────────────────── -->
 <div id="screenError" class="overlay" style="display:none">
   <div class="error-txt" id="errorMsg"></div>
@@ -304,6 +324,10 @@ input[type=number]:disabled {
       </div>
     </div>
     <div class="header-right">
+      <a id="hubBackBtn" class="hub-back-btn" href="#" target="_top">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Hub
+      </a>
       <div class="period-pill">
         <span>Período</span>
         <strong id="hPeriodo">—</strong>
@@ -338,6 +362,14 @@ input[type=number]:disabled {
 
     <!-- Tabs -->
     <div class="tabs-panel">
+
+      <!-- Seletor de unidade (visível só para quem tem acesso a múltiplas) -->
+      <div id="unitSelectorBar" class="unit-bar" style="display:none">
+        <label class="selector-label" style="margin-bottom:6px;display:block">Unidade</label>
+        <select id="mainUnitSel" class="emp-dropdown" onchange="onUnitChange(this.value)">
+        </select>
+      </div>
+
       <div class="tabs-nav">
         <button class="tab-btn active" onclick="switchTab('admin')">
           Administrativo <span class="tab-count" id="cAdmin">0</span>
@@ -347,59 +379,106 @@ input[type=number]:disabled {
         </button>
       </div>
 
-      <!-- Administrativo -->
+      <!-- ── Administrativo ── -->
       <div id="tabAdmin" class="tab-panel active">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th class="left" rowspan="2">Nome</th>
-                <th class="left" rowspan="2">Matrícula</th>
-                <th colspan="3" class="th-group">Previsto</th>
-                <th colspan="3" class="th-group">Efetivo</th>
-                <th rowspan="2"></th>
-              </tr>
-              <tr>
-                <th>8hs</th><th>6hs</th><th>Sáb</th>
-                <th>8hs</th><th>6hs</th><th>Sáb</th>
-              </tr>
-            </thead>
-            <tbody id="bodyAdmin">
-              <tr id="adminEmpty"><td colspan="9" class="no-data">Carregando...</td></tr>
-            </tbody>
-          </table>
+        <div class="selector-bar">
+          <div>
+            <label class="selector-label">Funcionário</label>
+            <select id="adminEmpSel" class="emp-dropdown" onchange="selectEmp('admin')">
+              <option value="">— Selecione o funcionário —</option>
+            </select>
+          </div>
         </div>
-        <button class="add-row-btn" id="addAdminBtn" onclick="addRow('admin')" style="display:none">
-          + Adicionar funcionário administrativo
-        </button>
+
+        <div id="adminNoSel" class="no-sel-hint">Selecione um funcionário acima para preencher os dados.</div>
+
+        <div id="adminFormCard" class="emp-form-card" style="display:none">
+          <div class="form-card-header">
+            <div class="form-emp-name" id="adminFormName"></div>
+            <div class="form-emp-mat"  id="adminFormMat"></div>
+          </div>
+          <div class="form-body">
+            <div class="field-group">
+              <div class="field-group-title">Previsto</div>
+              <div class="field-row">
+                <span class="field-lbl">8hs</span>
+                <input type="number" id="af_p8" min="0" step="1" value="0">
+              </div>
+              <div class="field-row">
+                <span class="field-lbl">6hs</span>
+                <input type="number" id="af_p6" min="0" step="1" value="0">
+              </div>
+              <div class="field-row">
+                <span class="field-lbl">Sáb</span>
+                <input type="number" id="af_ps" min="0" step="1" value="0">
+              </div>
+            </div>
+            <div class="field-group">
+              <div class="field-group-title">Efetivo</div>
+              <div class="field-row">
+                <span class="field-lbl">8hs</span>
+                <input type="number" id="af_e8" min="0" step="1" value="0">
+              </div>
+              <div class="field-row">
+                <span class="field-lbl">6hs</span>
+                <input type="number" id="af_e6" min="0" step="1" value="0">
+              </div>
+              <div class="field-row">
+                <span class="field-lbl">Sáb</span>
+                <input type="number" id="af_es" min="0" step="1" value="0">
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      <!-- Docente -->
+      <!-- ── Docente ── -->
       <div id="tabDocente" class="tab-panel">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th class="left" rowspan="2">Nome</th>
-                <th class="left" rowspan="2">Matrícula</th>
-                <th colspan="2" class="th-group">Carga Horária</th>
-                <th colspan="2" class="th-group">Dias Trabalhados</th>
-                <th rowspan="2"></th>
-              </tr>
-              <tr>
-                <th>CH Previsto</th><th>CH Efetivo</th>
-                <th>Previsto</th><th>Efetivo</th>
-              </tr>
-            </thead>
-            <tbody id="bodyDocente">
-              <tr id="docenteEmpty"><td colspan="7" class="no-data">Carregando...</td></tr>
-            </tbody>
-          </table>
+        <div class="selector-bar">
+          <div>
+            <label class="selector-label">Funcionário</label>
+            <select id="docenteEmpSel" class="emp-dropdown" onchange="selectEmp('docente')">
+              <option value="">— Selecione o funcionário —</option>
+            </select>
+          </div>
         </div>
-        <button class="add-row-btn" id="addDocenteBtn" onclick="addRow('docente')" style="display:none">
-          + Adicionar docente
-        </button>
+
+        <div id="docenteNoSel" class="no-sel-hint">Selecione um funcionário acima para preencher os dados.</div>
+
+        <div id="docenteFormCard" class="emp-form-card" style="display:none">
+          <div class="form-card-header">
+            <div class="form-emp-name" id="docenteFormName"></div>
+            <div class="form-emp-mat"  id="docenteFormMat"></div>
+          </div>
+          <div class="form-body">
+            <div class="field-group">
+              <div class="field-group-title">Carga Horária</div>
+              <div class="field-row">
+                <span class="field-lbl">Previsto</span>
+                <input type="number" id="df_chp" min="0" step="1" value="0">
+              </div>
+              <div class="field-row">
+                <span class="field-lbl">Efetivo</span>
+                <input type="number" id="df_che" min="0" step="1" value="0">
+              </div>
+            </div>
+            <div class="field-group">
+              <div class="field-group-title">Dias Trabalhados</div>
+              <div class="field-row">
+                <span class="field-lbl">Previsto</span>
+                <input type="number" id="df_dp" min="0" step="1" value="0">
+              </div>
+              <div class="field-row">
+                <span class="field-lbl">Efetivo</span>
+                <input type="number" id="df_de" min="0" step="1" value="0">
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
+
     </div>
 
   </div><!-- /app-body -->
@@ -417,39 +496,53 @@ input[type=number]:disabled {
 </div><!-- /screenMain -->
 
 <script>
-var TOKEN = '<?= token ?>';
+var TOKEN   = '<?= token ?>';
+var HUB_URL = 'https://script.google.com/a/macros/brasas.com/s/AKfycbyF7BArYMYFtcQY7_4RTGGPw89yNohAjR7eGptItP-EsnWhNfiZR2ISRaHdAkwlLSlr/exec';
+document.getElementById('hubBackBtn').href = HUB_URL;
 
-var state = { user: null, period: null, funcs: null, vrData: null, counter: 0 };
+var state = {
+  user: null, period: null, funcs: null, vrData: null, counter: 0,
+  availableUnits: [], selectedUnit: null,
+  pendingAdmin: {}, pendingDocente: {},
+  currentAdminKey: null, currentDocenteKey: null  // chave composta "unidade|matricula"
+};
 
-var MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
-             'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+var MESES = ['01 Janeiro','02 Fevereiro','03 Março','04 Abril','05 Maio','06 Junho',
+             '07 Julho','08 Agosto','09 Setembro','10 Outubro','11 Novembro','12 Dezembro'];
+
+function makeKey(unidade, matricula) { return unidade + '|' + matricula; }
+function parseKey(key) {
+  var idx = key.indexOf('|');
+  return { unidade: key.slice(0, idx), matricula: key.slice(idx + 1) };
+}
 
 // ── INIT ────────────────────────────────────────────────────
 
 window.onload = function() {
-  if (!TOKEN) {
-    show('screenDev');
-  } else {
-    show('screenLoading');
-    google.script.run
-      .withSuccessHandler(onUserLoaded)
-      .withFailureHandler(showError)
-      .getUserFromHub(TOKEN);
-  }
-};
-
-function devLogin() {
-  var nome    = document.getElementById('devNome').value.trim();
-  var unidade = document.getElementById('devUnidade').value.trim();
-  var errEl   = document.getElementById('devErr');
-  if (!nome || !unidade) { errEl.style.display = 'block'; return; }
-  errEl.style.display = 'none';
+  if (!TOKEN) { window.top.location.href = HUB_URL; return; }
   show('screenLoading');
-  onUserLoaded({ email: 'dev@brasas.com', nome: nome, role: 'dev', unidade: unidade });
-}
+  google.script.run
+    .withSuccessHandler(onUserLoaded)
+    .withFailureHandler(showError)
+    .getUserFromHub(TOKEN);
+};
 
 function onUserLoaded(user) {
   state.user = user;
+  google.script.run
+    .withSuccessHandler(onUnidadesLoaded)
+    .withFailureHandler(showError)
+    .getUnidades(TOKEN);
+}
+
+function onUnidadesLoaded(units) {
+  state.availableUnits = units || [];
+  if (!state.availableUnits.length) {
+    showError(new Error('Nenhuma unidade disponível para este usuário.'));
+    return;
+  }
+  // Auto-seleciona a primeira; o seletor aparece no painel para quem tem múltiplas
+  state.selectedUnit = state.availableUnits[0];
   google.script.run
     .withSuccessHandler(onPeriodLoaded)
     .withFailureHandler(showError)
@@ -461,7 +554,7 @@ function onPeriodLoaded(period) {
   google.script.run
     .withSuccessHandler(onFuncsLoaded)
     .withFailureHandler(showError)
-    .getFuncionarios(state.user.unidade);
+    .getFuncionarios(state.selectedUnit);
 }
 
 function onFuncsLoaded(funcs) {
@@ -469,12 +562,84 @@ function onFuncsLoaded(funcs) {
   google.script.run
     .withSuccessHandler(onVRLoaded)
     .withFailureHandler(showError)
-    .getVRData(state.user.unidade, state.period.mes, state.period.ano);
+    .getVRData(state.selectedUnit,
+               state.period.efetivo.mes,  state.period.efetivo.ano,
+               state.period.previsto.mes, state.period.previsto.ano);
 }
 
 function onVRLoaded(vrData) {
-  state.vrData = vrData;
-  renderUI();
+  state.vrData        = vrData;
+  state.pendingAdmin  = {};
+  state.pendingDocente = {};
+
+  state.funcs.administrativo.forEach(function(emp) {
+    var key = makeKey(emp.unidade, emp.matricula);
+    var d   = state.vrData.adminMap[emp.matricula] || {};
+    state.pendingAdmin[key] = {
+      previsto8hs: d.previsto8hs || 0, previsto6hs: d.previsto6hs || 0,
+      previstoSab: d.previstoSab || 0, efetivo8hs:  d.efetivo8hs  || 0,
+      efetivo6hs:  d.efetivo6hs  || 0, efetivoSab:  d.efetivoSab  || 0
+    };
+  });
+  state.funcs.docente.forEach(function(emp) {
+    var key = makeKey(emp.unidade, emp.matricula);
+    var d   = state.vrData.docenteMap[emp.matricula] || {};
+    state.pendingDocente[key] = {
+      chPrevisto: d.chPrevisto || 0, chEfetivo:    d.chEfetivo    || 0,
+      diasPrevisto: d.diasPrevisto || 0, diasEfetivo: d.diasEfetivo || 0
+    };
+  });
+
+  var mainAlreadyVisible = document.getElementById('screenMain').style.display === 'flex';
+  if (mainAlreadyVisible) {
+    refreshEmployees();
+  } else {
+    renderUI();
+  }
+}
+
+function refreshEmployees() {
+  var total = state.funcs.administrativo.length + state.funcs.docente.length;
+  document.getElementById('cAdmin').textContent   = state.funcs.administrativo.length;
+  document.getElementById('cDocente').textContent = state.funcs.docente.length;
+  document.getElementById('sTotal').textContent   = total;
+  document.getElementById('hUnidade').textContent = state.selectedUnit;
+  document.getElementById('sUnidade').textContent = state.selectedUnit;
+  var mainSel = document.getElementById('mainUnitSel');
+  if (mainSel) mainSel.value = state.selectedUnit;
+  populateDropdown('admin');
+  populateDropdown('docente');
+}
+
+// ── TROCA DE UNIDADE ─────────────────────────────────────────
+
+function onUnitChange(unit) {
+  if (unit === state.selectedUnit) return;
+  state.selectedUnit      = unit;
+  state.funcs             = null;
+  state.vrData            = null;
+  state.pendingAdmin      = {};
+  state.pendingDocente    = {};
+  state.currentAdminKey   = null;
+  state.currentDocenteKey = null;
+
+  ['admin','docente'].forEach(function(t) {
+    var a = t === 'admin';
+    document.getElementById(a ? 'adminFormCard' : 'docenteFormCard').style.display = 'none';
+    document.getElementById(a ? 'adminNoSel'   : 'docenteNoSel').style.display    = '';
+    document.getElementById(a ? 'adminEmpSel'  : 'docenteEmpSel').innerHTML       =
+      '<option value="">Carregando...</option>';
+  });
+
+  document.getElementById('hUnidade').textContent = unit;
+  document.getElementById('sUnidade').textContent = unit;
+
+  // Reutiliza a mesma cadeia do carregamento inicial
+  // onVRLoaded detecta que o app já está visível e chama refreshEmployees() em vez de renderUI()
+  google.script.run
+    .withSuccessHandler(onFuncsLoaded)
+    .withFailureHandler(showError)
+    .getFuncionarios(unit);
 }
 
 // ── RENDER ──────────────────────────────────────────────────
@@ -483,12 +648,12 @@ function renderUI() {
   var u = state.user;
   var p = state.period;
   var total = state.funcs.administrativo.length + state.funcs.docente.length;
-  var periodoStr = MESES[p.mes - 1] + ' / ' + p.ano;
+  var periodoStr = MESES[p.previsto.mes - 1] + ' / ' + p.previsto.ano;
 
-  // Header
   document.getElementById('hPeriodo').textContent = periodoStr;
+  document.getElementById('sPeriodo').textContent  = periodoStr;
   document.getElementById('hNome').textContent    = u.nome;
-  document.getElementById('hUnidade').textContent = u.unidade;
+  document.getElementById('hUnidade').textContent = state.selectedUnit;
 
   var badge = document.getElementById('hBadge');
   badge.style.display = '';
@@ -499,190 +664,138 @@ function renderUI() {
   } else {
     badge.textContent = 'Aberto';
     badge.className   = 'status-badge badge-open';
-    document.getElementById('saveBtn').style.display     = '';
-    document.getElementById('addAdminBtn').style.display   = '';
-    document.getElementById('addDocenteBtn').style.display = '';
+    document.getElementById('saveBtn').style.display = '';
   }
 
-  // Stat cards
-  document.getElementById('sUnidade').textContent = u.unidade;
-  document.getElementById('sPeriodo').textContent = periodoStr;
-  document.getElementById('sTotal').textContent   = total;
+  document.getElementById('sUnidade').textContent = state.selectedUnit || '—';
 
-  // Tab counts
+  // Seletor de unidade dentro do painel (visível só para múltiplas unidades)
+  var unitBar = document.getElementById('unitSelectorBar');
+  if (state.availableUnits.length > 1) {
+    var uOpts = state.availableUnits.map(function(un) {
+      return '<option value="' + esc(un) + '"' + (un === state.selectedUnit ? ' selected' : '') + '>' + esc(un) + '</option>';
+    }).join('');
+    document.getElementById('mainUnitSel').innerHTML = uOpts;
+    unitBar.style.display = '';
+  } else {
+    unitBar.style.display = 'none';
+  }
+
+  document.getElementById('sTotal').textContent   = total;
   document.getElementById('cAdmin').textContent   = state.funcs.administrativo.length;
   document.getElementById('cDocente').textContent = state.funcs.docente.length;
 
-  renderAdminTable();
-  renderDocenteTable();
+  populateDropdown('admin');
+  populateDropdown('docente');
 
   hideAll();
   document.getElementById('screenMain').style.display = 'flex';
 }
 
-function renderAdminTable() {
-  var tbody  = document.getElementById('bodyAdmin');
-  var emps   = state.funcs.administrativo;
-  var map    = state.vrData.adminMap;
-  var locked = state.period.locked;
-  var dis    = locked ? 'disabled' : '';
-
-  if (!emps.length) {
-    tbody.innerHTML = '<tr id="adminEmpty"><td colspan="9" class="no-data">Nenhum funcionário carregado — use o botão abaixo para adicionar.</td></tr>';
-    return;
-  }
-  var html = '';
-  emps.forEach(function(emp) {
-    var d = map[emp.matricula] || {};
-    html += '<tr>' +
-      '<td class="name">' + esc(emp.nome) + '</td>' +
-      '<td class="mat">'  + esc(emp.matricula) + '</td>' +
-      num('a_p8_' + emp.matricula, d.previsto8hs, dis) +
-      num('a_p6_' + emp.matricula, d.previsto6hs, dis) +
-      num('a_ps_' + emp.matricula, d.previstoSab, dis) +
-      num('a_e8_' + emp.matricula, d.efetivo8hs,  dis) +
-      num('a_e6_' + emp.matricula, d.efetivo6hs,  dis) +
-      num('a_es_' + emp.matricula, d.efetivoSab,  dis) +
-      '<td></td></tr>';
-  });
-  tbody.innerHTML = html;
-}
-
-function renderDocenteTable() {
-  var tbody  = document.getElementById('bodyDocente');
-  var emps   = state.funcs.docente;
-  var map    = state.vrData.docenteMap;
-  var locked = state.period.locked;
-  var dis    = locked ? 'disabled' : '';
-
-  if (!emps.length) {
-    tbody.innerHTML = '<tr id="docenteEmpty"><td colspan="7" class="no-data">Nenhum docente carregado — use o botão abaixo para adicionar.</td></tr>';
-    return;
-  }
-  var html = '';
-  emps.forEach(function(emp) {
-    var d = map[emp.matricula] || {};
-    html += '<tr>' +
-      '<td class="name">' + esc(emp.nome) + '</td>' +
-      '<td class="mat">'  + esc(emp.matricula) + '</td>' +
-      num('d_chp_' + emp.matricula, d.chPrevisto,   dis) +
-      num('d_che_' + emp.matricula, d.chEfetivo,    dis) +
-      num('d_dp_'  + emp.matricula, d.diasPrevisto, dis) +
-      num('d_de_'  + emp.matricula, d.diasEfetivo,  dis) +
-      '<td></td></tr>';
-  });
-  tbody.innerHTML = html;
-}
-
-function num(id, val, disabled) {
-  var v = (val !== undefined && val !== null && val !== '') ? Number(val) : 0;
-  return '<td class="num"><input type="number" id="' + id +
-         '" value="' + v + '" min="0" step="1" ' + disabled + '></td>';
-}
-
-// ── ADD / REMOVE ROWS ────────────────────────────────────────
-
-function addRow(type) {
-  var k       = ++state.counter;
+function populateDropdown(type) {
   var isAdmin = type === 'admin';
-  var prefix  = isAdmin ? 'a' : 'd';
-  var tbody   = document.getElementById(isAdmin ? 'bodyAdmin' : 'bodyDocente');
+  var sel     = document.getElementById(isAdmin ? 'adminEmpSel' : 'docenteEmpSel');
+  var emps    = isAdmin ? state.funcs.administrativo : state.funcs.docente;
+  var locked  = state.period.locked;
 
-  var emptyRow = document.getElementById(isAdmin ? 'adminEmpty' : 'docenteEmpty');
-  if (emptyRow) emptyRow.remove();
-
-  var emps = isAdmin ? state.funcs.administrativo : state.funcs.docente;
-
-  // Build name/mat cells
-  var nameCell, matCell;
-  if (emps.length > 0) {
-    var opts = '<option value="">— Selecione o funcionário —</option>';
-    emps.forEach(function(emp) {
-      opts += '<option value="' + esc(emp.matricula) + '" data-nome="' + esc(emp.nome) + '">' + esc(emp.nome) + '</option>';
-    });
-    nameCell = '<td class="name"><select class="emp-sel" id="' + prefix + '_sel_' + k +
-               '" onchange="onEmpSelect(\'' + type + '\',' + k + ')">' + opts + '</select></td>';
-    matCell  = '<td class="mat"><span class="mat-disp" id="' + prefix + '_mat_disp_' + k + '">—</span></td>';
-  } else {
-    // Fallback: text inputs when no employees loaded from spreadsheet
-    nameCell = '<td class="name"><input type="text" class="txt-inp w-full" id="' + prefix + '_nome_txt_' + k + '" placeholder="Nome completo"></td>';
-    matCell  = '<td class="mat"><input type="text" class="txt-inp w-mat" id="' + prefix + '_mat_txt_' + k + '" placeholder="Matrícula"></td>';
+  if (!emps.length) {
+    document.getElementById(isAdmin ? 'adminNoSel' : 'docenteNoSel').textContent =
+      'Nenhum funcionário cadastrado — use o botão abaixo para adicionar manualmente.';
+    sel.disabled = true;
+    return;
   }
 
-  var tr = document.createElement('tr');
-  tr.className   = 'manual-row';
-  tr.dataset.key  = k;
-  tr.dataset.nome = '';
-  tr.dataset.mat  = '';
+  // Usa chave composta "unidade|matricula" para evitar colisão entre unidades
+  var opts = '<option value="">— Selecione o funcionário —</option>';
+  emps.forEach(function(emp) {
+    var key = makeKey(emp.unidade, emp.matricula);
+    opts += '<option value="' + esc(key) + '">' + esc(emp.nome) + '</option>';
+  });
+  sel.innerHTML = opts;
+  sel.disabled  = !!locked;
+}
+
+// ── SELEÇÃO DE FUNCIONÁRIO ───────────────────────────────────
+
+function selectEmp(type) {
+  var isAdmin = type === 'admin';
+  var sel     = document.getElementById(isAdmin ? 'adminEmpSel' : 'docenteEmpSel');
+  var key     = sel.value;
+
+  flushForm(type);
+
+  var noSelId = isAdmin ? 'adminNoSel'    : 'docenteNoSel';
+  var cardId  = isAdmin ? 'adminFormCard' : 'docenteFormCard';
+  var nameId  = isAdmin ? 'adminFormName' : 'docenteFormName';
+  var matId   = isAdmin ? 'adminFormMat'  : 'docenteFormMat';
+
+  if (!key) {
+    if (isAdmin) state.currentAdminKey   = null;
+    else         state.currentDocenteKey = null;
+    document.getElementById(noSelId).style.display = '';
+    document.getElementById(cardId).style.display  = 'none';
+    return;
+  }
+
+  var parsed = parseKey(key);
+  var emps   = isAdmin ? state.funcs.administrativo : state.funcs.docente;
+  var emp    = null;
+  emps.forEach(function(e) {
+    if (e.matricula === parsed.matricula && e.unidade === parsed.unidade) emp = e;
+  });
+  if (!emp) return;
+
+  var locked = state.period.locked;
+  var d;
 
   if (isAdmin) {
-    tr.innerHTML = nameCell + matCell +
-      '<td class="num"><input type="number" id="a_p8_'+k+'" value="0" min="0" step="1"></td>' +
-      '<td class="num"><input type="number" id="a_p6_'+k+'" value="0" min="0" step="1"></td>' +
-      '<td class="num"><input type="number" id="a_ps_'+k+'" value="0" min="0" step="1"></td>' +
-      '<td class="num"><input type="number" id="a_e8_'+k+'" value="0" min="0" step="1"></td>' +
-      '<td class="num"><input type="number" id="a_e6_'+k+'" value="0" min="0" step="1"></td>' +
-      '<td class="num"><input type="number" id="a_es_'+k+'" value="0" min="0" step="1"></td>' +
-      '<td><button class="del-btn" onclick="removeRow(this,\'admin\')">×</button></td>';
+    state.currentAdminKey = key;
+    d = state.pendingAdmin[key] || {};
+    document.getElementById(nameId).textContent = emp.nome;
+    document.getElementById(matId).textContent  = 'Matrícula: ' + emp.matricula;
+    setVal('af_p8', d.previsto8hs, locked); setVal('af_p6', d.previsto6hs, locked);
+    setVal('af_ps', d.previstoSab, locked); setVal('af_e8', d.efetivo8hs,  locked);
+    setVal('af_e6', d.efetivo6hs,  locked); setVal('af_es', d.efetivoSab,  locked);
   } else {
-    tr.innerHTML = nameCell + matCell +
-      '<td class="num"><input type="number" id="d_chp_'+k+'" value="0" min="0" step="1"></td>' +
-      '<td class="num"><input type="number" id="d_che_'+k+'" value="0" min="0" step="1"></td>' +
-      '<td class="num"><input type="number" id="d_dp_'+k+'" value="0" min="0" step="1"></td>' +
-      '<td class="num"><input type="number" id="d_de_'+k+'" value="0" min="0" step="1"></td>' +
-      '<td><button class="del-btn" onclick="removeRow(this,\'docente\')">×</button></td>';
+    state.currentDocenteKey = key;
+    d = state.pendingDocente[key] || {};
+    document.getElementById(nameId).textContent = emp.nome;
+    document.getElementById(matId).textContent  = 'Matrícula: ' + emp.matricula;
+    setVal('df_chp', d.chPrevisto,   locked); setVal('df_che', d.chEfetivo,    locked);
+    setVal('df_dp',  d.diasPrevisto, locked); setVal('df_de',  d.diasEfetivo,  locked);
   }
 
-  tbody.appendChild(tr);
-  updateTotal();
+  document.getElementById(noSelId).style.display = 'none';
+  document.getElementById(cardId).style.display  = '';
 }
 
-function onEmpSelect(type, k) {
-  var prefix = type === 'admin' ? 'a' : 'd';
-  var sel    = document.getElementById(prefix + '_sel_' + k);
-  if (!sel) return;
-  var opt  = sel.options[sel.selectedIndex];
-  var nome = opt.getAttribute('data-nome') || '';
-  var mat  = opt.value || '';
+function setVal(id, v, locked) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.value    = (v !== undefined && v !== null) ? Number(v) : 0;
+  el.disabled = !!locked;
+}
 
-  var tr = sel.closest('tr');
-  tr.dataset.nome = nome;
-  tr.dataset.mat  = mat;
-
-  var disp = document.getElementById(prefix + '_mat_disp_' + k);
-  if (disp) {
-    disp.textContent  = mat || '—';
-    disp.style.color  = mat ? 'var(--gray-400)' : 'var(--gray-300)';
+function flushForm(type) {
+  var isAdmin = type === 'admin';
+  if (isAdmin) {
+    var key = state.currentAdminKey;
+    if (!key) return;
+    state.pendingAdmin[key] = {
+      previsto8hs: numVal('af_p8'), previsto6hs: numVal('af_p6'),
+      previstoSab: numVal('af_ps'), efetivo8hs:  numVal('af_e8'),
+      efetivo6hs:  numVal('af_e6'), efetivoSab:  numVal('af_es')
+    };
+  } else {
+    var key = state.currentDocenteKey;
+    if (!key) return;
+    state.pendingDocente[key] = {
+      chPrevisto:   numVal('df_chp'), chEfetivo:    numVal('df_che'),
+      diasPrevisto: numVal('df_dp'),  diasEfetivo:  numVal('df_de')
+    };
   }
 }
 
-function removeRow(btn, type) {
-  var tr     = btn.closest('tr');
-  var tbody  = tr.parentNode;
-  tr.remove();
-
-  // If no rows remain (loaded + manual), restore the empty-state row
-  if (!tbody.querySelector('tr')) {
-    var isAdmin = type === 'admin';
-    var cols    = isAdmin ? 9 : 7;
-    var emptyId = isAdmin ? 'adminEmpty' : 'docenteEmpty';
-    var emptyTr = document.createElement('tr');
-    emptyTr.id  = emptyId;
-    emptyTr.innerHTML = '<td colspan="' + cols + '" class="no-data">Nenhum funcionário carregado — use o botão abaixo para adicionar.</td>';
-    tbody.appendChild(emptyTr);
-  }
-  updateTotal();
-}
-
-function updateTotal() {
-  var adminLoaded   = state.funcs ? state.funcs.administrativo.length : 0;
-  var docenteLoaded = state.funcs ? state.funcs.docente.length : 0;
-  var adminManual   = document.querySelectorAll('#bodyAdmin .manual-row').length;
-  var docenteManual = document.querySelectorAll('#bodyDocente .manual-row').length;
-  document.getElementById('cAdmin').textContent   = adminLoaded + adminManual;
-  document.getElementById('cDocente').textContent = docenteLoaded + docenteManual;
-  document.getElementById('sTotal').textContent   = adminLoaded + docenteLoaded + adminManual + docenteManual;
-}
 
 // ── TABS ────────────────────────────────────────────────────
 
@@ -703,63 +816,25 @@ function switchTab(tab) {
 // ── SAVE ────────────────────────────────────────────────────
 
 function saveData() {
+  // Garante que o formulário atual está no estado pendente
+  flushForm('admin');
+  flushForm('docente');
+
   setStatus('Salvando...', 'saving');
   document.getElementById('saveBtn').disabled = true;
 
-  // Loaded employees
   var adminEmps = state.funcs.administrativo.map(function(emp) {
-    return {
-      matricula: emp.matricula, nome: emp.nome,
-      previsto8hs: val('a_p8_' + emp.matricula),
-      previsto6hs: val('a_p6_' + emp.matricula),
-      previstoSab: val('a_ps_' + emp.matricula),
-      efetivo8hs:  val('a_e8_' + emp.matricula),
-      efetivo6hs:  val('a_e6_' + emp.matricula),
-      efetivoSab:  val('a_es_' + emp.matricula)
-    };
+    var d = state.pendingAdmin[makeKey(emp.unidade, emp.matricula)] || {};
+    return { matricula: emp.matricula, nome: emp.nome,
+      previsto8hs: d.previsto8hs||0, previsto6hs: d.previsto6hs||0, previstoSab: d.previstoSab||0,
+      efetivo8hs:  d.efetivo8hs||0,  efetivo6hs:  d.efetivo6hs||0,  efetivoSab:  d.efetivoSab||0 };
   });
 
-  // Manually added admin rows
-  document.querySelectorAll('#bodyAdmin .manual-row').forEach(function(tr) {
-    var k    = tr.dataset.key;
-    var nome = tr.dataset.nome || '';
-    var mat  = tr.dataset.mat  || '';
-    // Fallback to text inputs (when no dropdown was available)
-    if (!nome) { var ni = document.getElementById('a_nome_txt_' + k); nome = ni ? ni.value.trim() : ''; }
-    if (!mat)  { var mi = document.getElementById('a_mat_txt_'  + k); mat  = mi ? mi.value.trim() : ''; }
-    if (!nome || !mat) return;
-    adminEmps.push({
-      matricula: mat, nome: nome,
-      previsto8hs: val('a_p8_' + k), previsto6hs: val('a_p6_' + k),
-      previstoSab: val('a_ps_' + k), efetivo8hs:  val('a_e8_' + k),
-      efetivo6hs:  val('a_e6_' + k), efetivoSab:  val('a_es_' + k)
-    });
-  });
-
-  // Loaded docentes
   var docenteEmps = state.funcs.docente.map(function(emp) {
-    return {
-      matricula: emp.matricula, nome: emp.nome,
-      chPrevisto:   val('d_chp_' + emp.matricula),
-      chEfetivo:    val('d_che_' + emp.matricula),
-      diasPrevisto: val('d_dp_'  + emp.matricula),
-      diasEfetivo:  val('d_de_'  + emp.matricula)
-    };
-  });
-
-  // Manually added docente rows
-  document.querySelectorAll('#bodyDocente .manual-row').forEach(function(tr) {
-    var k    = tr.dataset.key;
-    var nome = tr.dataset.nome || '';
-    var mat  = tr.dataset.mat  || '';
-    if (!nome) { var ni = document.getElementById('d_nome_txt_' + k); nome = ni ? ni.value.trim() : ''; }
-    if (!mat)  { var mi = document.getElementById('d_mat_txt_'  + k); mat  = mi ? mi.value.trim() : ''; }
-    if (!nome || !mat) return;
-    docenteEmps.push({
-      matricula: mat, nome: nome,
-      chPrevisto:   val('d_chp_' + k), chEfetivo:    val('d_che_' + k),
-      diasPrevisto: val('d_dp_'  + k), diasEfetivo:  val('d_de_'  + k)
-    });
+    var d = state.pendingDocente[makeKey(emp.unidade, emp.matricula)] || {};
+    return { matricula: emp.matricula, nome: emp.nome,
+      chPrevisto: d.chPrevisto||0, chEfetivo: d.chEfetivo||0,
+      diasPrevisto: d.diasPrevisto||0, diasEfetivo: d.diasEfetivo||0 };
   });
 
   google.script.run
@@ -772,15 +847,22 @@ function saveData() {
       document.getElementById('saveBtn').disabled = false;
     })
     .saveVRData({
-      unidade: state.user.unidade,
-      mes:     state.period.mes,
-      ano:     state.period.ano,
+      unidade:    state.selectedUnit,
+      efetivoMes: state.period.efetivo.mes,
+      efetivoAno: state.period.efetivo.ano,
+      previsoMes:  state.period.previsto.mes,
+      previsoAno:  state.period.previsto.ano,
       administrativo: adminEmps,
       docente:        docenteEmps
     });
 }
 
 // ── UTILS ───────────────────────────────────────────────────
+
+function numVal(id) {
+  var el = document.getElementById(id);
+  return el ? (Number(el.value) || 0) : 0;
+}
 
 function val(id) {
   var el = document.getElementById(id);
