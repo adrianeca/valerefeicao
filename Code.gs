@@ -17,6 +17,17 @@ const COL = {
   UNIDADE_SEC:  30   // AE
 };
 
+// Normaliza texto para comparação: minúsculo, sem acento, sem espaços nas bordas
+function norm_(s) {
+  return String(s || '').trim().toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+
+// Extrai o número do mês mesmo quando a célula guarda texto como "06 Junho" (em vez de 6)
+function parseMes_(v) {
+  return parseInt(String(v).trim(), 10) || 0;
+}
+
 // =============================================================================
 // ENTRY POINT
 // =============================================================================
@@ -100,42 +111,51 @@ function isUserAllowedUnit_(user, unit) {
   });
 }
 
+// Todas as unidades que o usuário pode ver: as dele (se restrito) ou todas que existem
+// (com funcionário ativo cadastrado OU já com lançamento na planilha de VR)
+function getAllowedUnidades_(user) {
+  if (user.units && user.units.length > 0) return user.units;
+
+  const set = {};
+
+  const funcSheet = SpreadsheetApp.openById(FUNC_SHEET_ID).getSheetByName('RJ - UNIDADES');
+  if (!funcSheet) throw new Error('Aba "RJ - UNIDADES" não encontrada.');
+  const funcRows = funcSheet.getDataRange().getValues();
+  for (let i = 1; i < funcRows.length; i++) {
+    const nome = String(funcRows[i][COL.NOME] || '').trim();
+    if (!nome) continue;
+    const ativoRaw = norm_(funcRows[i][COL.ATIVO]);
+    if (ativoRaw === 'false' || ativoRaw === 'nao' || ativoRaw === 'no' || ativoRaw === '0') continue;
+    const u = String(funcRows[i][COL.UNIDADE] || '').trim();
+    if (u) set[u] = true;
+  }
+
+  const vrSs = SpreadsheetApp.openById(VR_SHEET_ID);
+  ['ADMINISTRATIVO', 'DOCENTE'].forEach(function(sheetName) {
+    const sheet = vrSs.getSheetByName(sheetName);
+    if (!sheet) return;
+    const vrRows = sheet.getDataRange().getValues();
+    for (let i = 1; i < vrRows.length; i++) {
+      const u = String(vrRows[i][0] || '').trim();
+      if (u) set[u] = true;
+    }
+  });
+
+  return Object.keys(set).sort();
+}
+
 // Retorna lista de unidades disponíveis para o usuário
 function getUnidades(token) {
   const user = getSessionUser_(token);
   if (!user) throw new Error('Sessão inválida.');
-
-  // Usuário com unidades específicas no Hub: retorna só as dele
-  if (user.units && user.units.length > 0) return user.units;
-
-  // Acesso total: descobre unidades ativas na planilha de funcionários
-  const ss    = SpreadsheetApp.openById(FUNC_SHEET_ID);
-  const sheet = ss.getSheetByName('RJ - UNIDADES');
-  if (!sheet) throw new Error('Aba "RJ - UNIDADES" não encontrada.');
-  const rows  = sheet.getDataRange().getValues();
-
-  const norm = function(s) {
-    return String(s || '').trim().toLowerCase()
-      .normalize('NFD').replace(/[̀-ͯ]/g, '');
-  };
-
-  const set = {};
-  for (let i = 1; i < rows.length; i++) {
-    const nome = String(rows[i][COL.NOME] || '').trim();
-    if (!nome) continue;
-    const ativoRaw = norm(rows[i][COL.ATIVO]);
-    if (ativoRaw === 'false' || ativoRaw === 'nao' || ativoRaw === 'no' || ativoRaw === '0') continue;
-    const u = String(rows[i][COL.UNIDADE] || '').trim();
-    if (u) set[u] = true;
-  }
-  return Object.keys(set).sort();
+  return getAllowedUnidades_(user);
 }
 
 // =============================================================================
 // PERÍODO VIGENTE
 // =============================================================================
 
-function getCurrentPeriod() {
+function getCurrentPeriod(token) {
   const now  = new Date();
   const mes  = now.getMonth() + 1;
   const ano  = now.getFullYear();
@@ -145,8 +165,14 @@ function getCurrentPeriod() {
   let previsoAno = ano;
   if (previsoMes > 12) { previsoMes = 1; previsoAno++; }
 
-  // DEV: bloqueio desativado — restaurar para: const locked = now.getDate() > 11;
-  const locked = false;
+  // DEV: bloqueio desativado — restaurar para: let locked = now.getDate() > 11;
+  let locked = false;
+
+  // Liberação temporária (24h) concedida por um admin ignora o bloqueio para esse usuário
+  if (locked) {
+    const user = getSessionUser_(token);
+    if (user && hasActiveLiberacao_(user.email)) locked = false;
+  }
 
   return {
     efetivo:  { mes: mes,       ano: ano       },  // preenchido no próprio mês
@@ -156,23 +182,85 @@ function getCurrentPeriod() {
 }
 
 // =============================================================================
+// LIBERAÇÕES TEMPORÁRIAS DE EDIÇÃO (24h) — restrito a admins
+// =============================================================================
+
+// Colunas: Email | Liberado Por | Criado Em | Expira Em
+function getLiberacoesSheet_() {
+  const ss = SpreadsheetApp.openById(VR_SHEET_ID);
+  let sheet = ss.getSheetByName('LIBERACOES');
+  if (!sheet) {
+    sheet = ss.insertSheet('LIBERACOES');
+    sheet.appendRow(['Email', 'Liberado Por', 'Criado Em', 'Expira Em']);
+  }
+  return sheet;
+}
+
+function requireAdmin_(token) {
+  const user = getSessionUser_(token);
+  if (!user) throw new Error('Sessão inválida ou expirada. Acesse novamente pelo Hub.');
+  if (user.role !== 'admin') throw new Error('Acesso restrito a administradores.');
+  return user;
+}
+
+function hasActiveLiberacao_(email) {
+  if (!email) return false;
+  const emailNorm = norm_(email);
+  const now  = new Date();
+  const rows = getLiberacoesSheet_().getDataRange().getValues();
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (norm_(r[0]) === emailNorm && r[3] && new Date(r[3]) > now) return true;
+  }
+  return false;
+}
+
+// Lista todas as liberações já concedidas (mais recentes primeiro) — só para admins
+function getLiberacoes(token) {
+  requireAdmin_(token);
+  const rows = getLiberacoesSheet_().getDataRange().getValues();
+
+  const list = [];
+  for (let i = 1; i < rows.length; i++) {
+    const r = rows[i];
+    if (!r[0]) continue;
+    list.push({ email: String(r[0]).trim(), liberadoPor: String(r[1]).trim(), criadoEm: r[2], expiraEm: r[3] });
+  }
+  list.sort(function(a, b) { return new Date(b.criadoEm) - new Date(a.criadoEm); });
+  return list;
+}
+
+// Concede 24h de edição liberada para um e-mail — só admins podem chamar
+function criarLiberacao(token, email) {
+  const admin = requireAdmin_(token);
+
+  email = String(email || '').trim().toLowerCase();
+  if (!email || email.indexOf('@') === -1) throw new Error('Informe um e-mail válido.');
+
+  const now    = new Date();
+  const expira = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+
+  getLiberacoesSheet_().appendRow([email, admin.email, now, expira]);
+  return getLiberacoes(token);
+}
+
+// =============================================================================
 // FUNCIONÁRIOS
 // =============================================================================
 
-function getFuncionarios(unidade) {
-  if (!unidade) throw new Error('Selecione uma unidade antes de carregar os funcionários.');
+// Retorna os funcionários de TODAS as unidades que o usuário pode ver.
+// Um funcionário com unidade principal + secundária aparece uma vez para cada uma
+// (desde que esteja entre as unidades permitidas), pois cada uma é um contexto de lançamento distinto.
+function getFuncionarios(token) {
+  const user = getSessionUser_(token);
+  if (!user) throw new Error('Sessão inválida.');
+  const allowedNorm = getAllowedUnidades_(user).map(norm_);
 
   const ss    = SpreadsheetApp.openById(FUNC_SHEET_ID);
   const sheet = ss.getSheetByName('RJ - UNIDADES');
   if (!sheet) throw new Error('Aba "RJ - UNIDADES" não encontrada na planilha de funcionários.');
   const rows  = sheet.getDataRange().getValues();
 
-  const norm = function(s) {
-    return String(s || '').trim().toLowerCase()
-      .normalize('NFD').replace(/[̀-ͯ]/g, '');
-  };
-
-  const unidadeNorm    = norm(unidade);
   const administrativo = [];
   const docente        = [];
 
@@ -181,96 +269,88 @@ function getFuncionarios(unidade) {
     const nome = String(row[COL.NOME]).trim();
     if (!nome) continue;
 
-    const ativoRaw = norm(row[COL.ATIVO]);
+    const ativoRaw = norm_(row[COL.ATIVO]);
     if (ativoRaw === 'false' || ativoRaw === 'nao' || ativoRaw === 'no' || ativoRaw === '0') continue;
 
-    // Pertence à unidade (principal ou secundária) — comparação sem acento e sem case
-    const unidadePrinc = norm(row[COL.UNIDADE]);
-    const unidadeSec   = norm(row[COL.UNIDADE_SEC]);
-    if (unidadePrinc !== unidadeNorm && unidadeSec !== unidadeNorm) continue;
-
-    const funcao    = String(row[COL.FUNCAO]).trim().toUpperCase();
     const matricula = String(row[COL.MATRICULA]).trim();
     if (!matricula) continue;
 
-    // Inclui a unidade principal do funcionário para desambiguar matrículas duplicadas entre unidades
-    const emp = {
-      nome:     nome,
-      matricula: matricula,
-      unidade:  String(row[COL.UNIDADE]).trim()
-    };
+    const funcao = String(row[COL.FUNCAO]).trim().toUpperCase();
+    const list   = funcao === 'PROFESSOR' ? docente : administrativo;
 
-    if (funcao === 'PROFESSOR') {
-      docente.push(emp);
-    } else {
-      administrativo.push(emp);
-    }
+    // Unidade principal + secundária, sem repetir se forem iguais
+    const unidades = [String(row[COL.UNIDADE]).trim(), String(row[COL.UNIDADE_SEC]).trim()]
+      .filter(function(u, idx, arr) { return u && arr.indexOf(u) === idx; });
+
+    unidades.forEach(function(u) {
+      if (allowedNorm.indexOf(norm_(u)) === -1) return;
+      list.push({ nome: nome, matricula: matricula, unidade: u });
+    });
   }
 
-  administrativo.sort(function(a, b) { return a.nome.localeCompare(b.nome, 'pt-BR'); });
-  docente.sort(function(a, b)        { return a.nome.localeCompare(b.nome, 'pt-BR'); });
+  administrativo.sort(function(a, b) { return a.nome.localeCompare(b.nome, 'pt-BR') || a.unidade.localeCompare(b.unidade, 'pt-BR'); });
+  docente.sort(function(a, b)        { return a.nome.localeCompare(b.nome, 'pt-BR') || a.unidade.localeCompare(b.unidade, 'pt-BR'); });
 
   return { administrativo: administrativo, docente: docente };
 }
 
 // =============================================================================
-// LEITURA DO VR
+// LEITURA DO VR — todas as linhas de todas as unidades permitidas, estilo planilha
 // =============================================================================
 
-// Lê dados de DOIS períodos: previsto (próximo mês) e efetivo (mês atual)
 // Colunas ADMINISTRATIVO: Unidade|Mes|Ano|Mat|Nome|Prev8|Prev6|PrevSab|Efet8|Efet6|EfetSab
 // Colunas DOCENTE:        Unidade|Mes|Ano|Mat|Nome|CHPrev|CHEfet|DiasPrev|DiasEfet
-function getVRData(unidade, efetivoMes, efetivoAno, previsoMes, previsoAno) {
+// Retorna TODAS as linhas já lançadas nas unidades que o usuário pode ver, na ordem cronológica
+function getVRData(token) {
+  const user = getSessionUser_(token);
+  if (!user) throw new Error('Sessão inválida.');
+  const allowedNorm = getAllowedUnidades_(user).map(norm_);
+
   const ss           = SpreadsheetApp.openById(VR_SHEET_ID);
   const adminSheet   = ss.getSheetByName('ADMINISTRATIVO');
   const docenteSheet = ss.getSheetByName('DOCENTE');
 
-  const adminMap   = {};
-  const docenteMap = {};
-
+  const administrativo = [];
   const adminRows = adminSheet.getDataRange().getValues();
   for (let i = 1; i < adminRows.length; i++) {
     const r = adminRows[i];
-    if (String(r[0]).trim() !== unidade) continue;
-    const rMes = Number(r[1]);
-    const rAno = Number(r[2]);
-    const mat  = String(r[3]).trim();
-    if (!adminMap[mat]) adminMap[mat] = { previsto8hs:0, previsto6hs:0, previstoSab:0, efetivo8hs:0, efetivo6hs:0, efetivoSab:0 };
-    if (rMes === previsoMes && rAno === previsoAno) {
-      adminMap[mat].previsto8hs = r[5]  || 0;
-      adminMap[mat].previsto6hs = r[6]  || 0;
-      adminMap[mat].previstoSab = r[7]  || 0;
-    }
-    if (rMes === efetivoMes && rAno === efetivoAno) {
-      adminMap[mat].efetivo8hs  = r[8]  || 0;
-      adminMap[mat].efetivo6hs  = r[9]  || 0;
-      adminMap[mat].efetivoSab  = r[10] || 0;
-    }
+    if (allowedNorm.indexOf(norm_(r[0])) === -1) continue;
+    const mes = parseMes_(r[1]), ano = Number(r[2]);
+    if (!mes || !ano) continue;
+    administrativo.push({
+      unidade: String(r[0]).trim(), mes: mes, ano: ano,
+      matricula: String(r[3]).trim(), nome: String(r[4]).trim(),
+      previsto8hs: r[5] || 0, previsto6hs: r[6] || 0, previstoSab: r[7] || 0,
+      efetivo8hs:  r[8] || 0, efetivo6hs:  r[9] || 0, efetivoSab:  r[10] || 0
+    });
   }
+  administrativo.sort(function(a, b) {
+    return (a.ano - b.ano) || (a.mes - b.mes) || a.unidade.localeCompare(b.unidade, 'pt-BR') || a.nome.localeCompare(b.nome, 'pt-BR');
+  });
 
+  const docente = [];
   const docenteRows = docenteSheet.getDataRange().getValues();
   for (let i = 1; i < docenteRows.length; i++) {
     const r = docenteRows[i];
-    if (String(r[0]).trim() !== unidade) continue;
-    const rMes = Number(r[1]);
-    const rAno = Number(r[2]);
-    const mat  = String(r[3]).trim();
-    if (!docenteMap[mat]) docenteMap[mat] = { chPrevisto:0, chEfetivo:0, diasPrevisto:0, diasEfetivo:0 };
-    if (rMes === previsoMes && rAno === previsoAno) {
-      docenteMap[mat].chPrevisto   = r[5] || 0;
-      docenteMap[mat].diasPrevisto = r[7] || 0;
-    }
-    if (rMes === efetivoMes && rAno === efetivoAno) {
-      docenteMap[mat].chEfetivo   = r[6] || 0;
-      docenteMap[mat].diasEfetivo = r[8] || 0;
-    }
+    if (allowedNorm.indexOf(norm_(r[0])) === -1) continue;
+    const mes = parseMes_(r[1]), ano = Number(r[2]);
+    if (!mes || !ano) continue;
+    docente.push({
+      unidade: String(r[0]).trim(), mes: mes, ano: ano,
+      matricula: String(r[3]).trim(), nome: String(r[4]).trim(),
+      chPrevisto: r[5] || 0, chEfetivo: r[6] || 0,
+      diasPrevisto: r[7] || 0, diasEfetivo: r[8] || 0
+    });
   }
+  docente.sort(function(a, b) {
+    return (a.ano - b.ano) || (a.mes - b.mes) || a.unidade.localeCompare(b.unidade, 'pt-BR') || a.nome.localeCompare(b.nome, 'pt-BR');
+  });
 
-  return { adminMap: adminMap, docenteMap: docenteMap };
+  return { administrativo: administrativo, docente: docente };
 }
 
 // =============================================================================
-// SALVAMENTO DO VR
+// SALVAMENTO DO VR — cada item do payload já traz sua própria unidade/mês/ano
 // =============================================================================
 
 function saveVRData(payload) {
@@ -278,93 +358,52 @@ function saveVRData(payload) {
   // const period = getCurrentPeriod();
   // if (period.locked) throw new Error('O período está bloqueado. Prazo encerrado no dia 11.');
 
+  const user = getSessionUser_(payload.token);
+  if (!user) throw new Error('Sessão inválida ou expirada. Acesse novamente pelo Hub.');
+
   const ss           = SpreadsheetApp.openById(VR_SHEET_ID);
   const adminSheet   = ss.getSheetByName('ADMINISTRATIVO');
   const docenteSheet = ss.getSheetByName('DOCENTE');
 
-  const { unidade, efetivoMes, efetivoAno, previsoMes, previsoAno } = payload;
+  // Nunca confia na unidade vinda do cliente sem checar permissão
+  const adminEntries   = (payload.administrativo || []).filter(function(e) { return isUserAllowedUnit_(user, e.unidade); });
+  const docenteEntries = (payload.docente        || []).filter(function(e) { return isUserAllowedUnit_(user, e.unidade); });
 
-  // Previsto → linha do próximo mês (só atualiza colunas de previsto, preserva efetivo)
-  _upsertPrevisto(adminSheet,   unidade, previsoMes, previsoAno, payload.administrativo, 'admin');
-  _upsertPrevisto(docenteSheet, unidade, previsoMes, previsoAno, payload.docente,        'docente');
+  _upsertRows_(adminSheet, adminEntries, function(e) {
+    return [Number(e.previsto8hs)||0, Number(e.previsto6hs)||0, Number(e.previstoSab)||0,
+            Number(e.efetivo8hs)||0,  Number(e.efetivo6hs)||0,  Number(e.efetivoSab)||0];
+  });
 
-  // Efetivo → linha do mês atual (só atualiza colunas de efetivo, preserva previsto)
-  _upsertEfetivo(adminSheet,   unidade, efetivoMes, efetivoAno, payload.administrativo, 'admin');
-  _upsertEfetivo(docenteSheet, unidade, efetivoMes, efetivoAno, payload.docente,        'docente');
+  _upsertRows_(docenteSheet, docenteEntries, function(e) {
+    return [Number(e.chPrevisto)||0, Number(e.chEfetivo)||0,
+            Number(e.diasPrevisto)||0, Number(e.diasEfetivo)||0];
+  });
 
   return { success: true };
 }
 
-function _buildExistingMap_(sheet, unidade, mes, ano) {
+// Atualiza a linha existente (unidade+mes+ano+matricula) ou cria uma nova, para cada item
+function _upsertRows_(sheet, entries, valuesFn) {
+  if (!entries || !entries.length) return;
+
   const allRows = sheet.getDataRange().getValues();
   const map = {};
   for (let i = 1; i < allRows.length; i++) {
     const r = allRows[i];
-    if (String(r[0]).trim() === unidade && Number(r[1]) === mes && Number(r[2]) === ano) {
-      map[String(r[3]).trim()] = { rowNum: i + 1 };
-    }
+    map[norm_(r[0]) + '|' + parseMes_(r[1]) + '|' + Number(r[2]) + '|' + String(r[3]).trim()] = i + 1;
   }
-  return map;
-}
 
-// Salva apenas os campos de previsto — preserva efetivo se a linha já existir
-function _upsertPrevisto(sheet, unidade, mes, ano, employees, type) {
-  if (!employees || !employees.length) return;
-  const existing = _buildExistingMap_(sheet, unidade, mes, ano);
-
-  for (const emp of employees) {
-    const mat = String(emp.matricula).trim();
-    if (type === 'admin') {
-      if (existing[mat]) {
-        // Atualiza só colunas 6-8 (Prev8, Prev6, PrevSab)
-        sheet.getRange(existing[mat].rowNum, 6, 1, 3).setValues([[
-          Number(emp.previsto8hs)||0, Number(emp.previsto6hs)||0, Number(emp.previstoSab)||0
-        ]]);
-      } else {
-        sheet.appendRow([unidade, mes, ano, mat, emp.nome,
-          Number(emp.previsto8hs)||0, Number(emp.previsto6hs)||0, Number(emp.previstoSab)||0,
-          0, 0, 0]);
-      }
+  entries.forEach(function(e) {
+    const mat    = String(e.matricula).trim();
+    const key    = norm_(e.unidade) + '|' + Number(e.mes) + '|' + Number(e.ano) + '|' + mat;
+    const values = valuesFn(e);
+    if (map[key]) {
+      sheet.getRange(map[key], 6, 1, values.length).setValues([values]);
     } else {
-      if (existing[mat]) {
-        sheet.getRange(existing[mat].rowNum, 6, 1, 1).setValues([[Number(emp.chPrevisto)||0]]);
-        sheet.getRange(existing[mat].rowNum, 8, 1, 1).setValues([[Number(emp.diasPrevisto)||0]]);
-      } else {
-        sheet.appendRow([unidade, mes, ano, mat, emp.nome,
-          Number(emp.chPrevisto)||0, 0, Number(emp.diasPrevisto)||0, 0]);
-      }
+      sheet.appendRow([e.unidade, e.mes, e.ano, mat, e.nome].concat(values));
+      map[key] = sheet.getLastRow();
     }
-  }
-}
-
-// Salva apenas os campos de efetivo — preserva previsto se a linha já existir
-function _upsertEfetivo(sheet, unidade, mes, ano, employees, type) {
-  if (!employees || !employees.length) return;
-  const existing = _buildExistingMap_(sheet, unidade, mes, ano);
-
-  for (const emp of employees) {
-    const mat = String(emp.matricula).trim();
-    if (type === 'admin') {
-      if (existing[mat]) {
-        // Atualiza só colunas 9-11 (Efet8, Efet6, EfetSab)
-        sheet.getRange(existing[mat].rowNum, 9, 1, 3).setValues([[
-          Number(emp.efetivo8hs)||0, Number(emp.efetivo6hs)||0, Number(emp.efetivoSab)||0
-        ]]);
-      } else {
-        sheet.appendRow([unidade, mes, ano, mat, emp.nome,
-          0, 0, 0,
-          Number(emp.efetivo8hs)||0, Number(emp.efetivo6hs)||0, Number(emp.efetivoSab)||0]);
-      }
-    } else {
-      if (existing[mat]) {
-        sheet.getRange(existing[mat].rowNum, 7, 1, 1).setValues([[Number(emp.chEfetivo)||0]]);
-        sheet.getRange(existing[mat].rowNum, 9, 1, 1).setValues([[Number(emp.diasEfetivo)||0]]);
-      } else {
-        sheet.appendRow([unidade, mes, ano, mat, emp.nome,
-          0, Number(emp.chEfetivo)||0, 0, Number(emp.diasEfetivo)||0]);
-      }
-    }
-  }
+  });
 }
 
 // =============================================================================
@@ -392,19 +431,4 @@ function diagnosticoVR() {
     Logger.log('Linha %s → unidade="%s" mes=%s ano=%s mat="%s" vals=%s',
       i + 2, r[0], r[1], r[2], r[3], JSON.stringify(r.slice(5)));
   });
-
-  // Testa a leitura real para a primeira unidade encontrada
-  const frows = SpreadsheetApp.openById(FUNC_SHEET_ID)
-    .getSheetByName('RJ - UNIDADES').getDataRange().getValues();
-  var unidade = '';
-  for (var i = 1; i < frows.length; i++) {
-    var u = String(frows[i][COL.UNIDADE] || '').trim();
-    if (u) { unidade = u; break; }
-  }
-  Logger.log('\n=== getVRData para unidade "%s" ===', unidade);
-  const result = getVRData(unidade,
-    period.efetivo.mes,  period.efetivo.ano,
-    period.previsto.mes, period.previsto.ano);
-  Logger.log('adminMap: %s',   JSON.stringify(result.adminMap));
-  Logger.log('docenteMap: %s', JSON.stringify(result.docenteMap));
 }

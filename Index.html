@@ -97,8 +97,8 @@ body{font-family:var(--font);background:var(--gray-100);color:var(--navy-800);mi
   display:flex;align-items:center;gap:5px;
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
   border-radius:8px;padding:6px 13px;
-  font-size:.8rem;font-weight:600;color:var(--navy-200);
-  text-decoration:none;transition:background .15s,color .15s;white-space:nowrap;
+  font-family:var(--font);font-size:.8rem;font-weight:600;color:var(--navy-200);
+  text-decoration:none;cursor:pointer;transition:background .15s,color .15s;white-space:nowrap;
 }
 .hub-back-btn:hover{background:rgba(255,255,255,.14);color:#fff}
 .period-pill {
@@ -158,10 +158,6 @@ body{font-family:var(--font);background:var(--gray-100);color:var(--navy-800);mi
 .tab-panel.active {display:block}
 
 /* ── SELECTOR BAR ──────────────────────────────────────────── */
-.selector-bar {
-  display:flex;align-items:flex-end;gap:14px;
-  padding:20px 20px 0;flex-wrap:wrap;
-}
 .selector-label {
   display:block;font-size:.67rem;font-weight:700;text-transform:uppercase;
   letter-spacing:.07em;color:var(--gray-400);margin-bottom:6px;
@@ -181,29 +177,6 @@ body{font-family:var(--font);background:var(--gray-100);color:var(--navy-800);mi
   text-align:center;padding:52px 24px;color:var(--gray-400);
   font-size:.88rem;font-style:italic;
 }
-
-/* ── EMPLOYEE FORM CARD ────────────────────────────────────── */
-.emp-form-card {
-  margin:20px;border:1.5px solid var(--gray-200);border-radius:10px;overflow:hidden;
-}
-.form-card-header {
-  background:var(--gray-50);border-bottom:1px solid var(--gray-200);
-  padding:14px 20px;
-}
-.form-emp-name {font-size:.95rem;font-weight:700;color:var(--navy-800)}
-.form-emp-mat  {font-size:.77rem;color:var(--gray-400);margin-top:3px}
-.form-body {padding:24px 20px;display:flex;gap:40px;flex-wrap:wrap}
-.field-group {flex:1;min-width:150px}
-.field-group-title {
-  display:inline-block;font-size:.63rem;font-weight:700;text-transform:uppercase;
-  letter-spacing:.1em;color:#fff;background:var(--navy-800);
-  padding:5px 12px;border-radius:5px;margin-bottom:14px;
-}
-.field-row {
-  display:flex;align-items:center;justify-content:space-between;
-  gap:12px;margin-bottom:10px;
-}
-.field-lbl {font-size:.84rem;color:var(--gray-600);font-weight:500;min-width:60px}
 
 /* NUMBER INPUTS */
 input[type=number] {
@@ -260,11 +233,64 @@ input[type=number]:disabled {
 
 /* UNIT BAR (dentro do painel, acima das abas) */
 .unit-bar {
-  padding:16px 20px 0;
+  padding:16px 20px;
   border-bottom:1px solid var(--gray-200);
-  padding-bottom:16px;
   background:var(--gray-50);
 }
+.filter-row {display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}
+.filter-hint {font-size:.72rem;color:var(--gray-400);margin-top:4px}
+
+/* ── TABELA DE LANÇAMENTOS (estilo planilha) ─────────────────── */
+.hist-section {padding:20px;overflow-x:auto}
+.hist-table {
+  width:100%;border-collapse:collapse;font-size:.83rem;margin-bottom:16px;
+  border:1px solid var(--gray-300);
+}
+.hist-table th, .hist-table td {
+  padding:6px 10px;text-align:center;
+  border:1px solid var(--gray-200);
+}
+.hist-table th {
+  background:var(--gray-100);color:var(--navy-800);font-weight:700;
+  font-size:.72rem;white-space:nowrap;
+}
+.hist-table td:first-child, .hist-table th:first-child {text-align:left}
+.hist-table td:nth-child(5), .hist-table th:nth-child(5) {text-align:left}
+.hist-table tbody tr:nth-child(even) {background:var(--gray-50)}
+.hist-table tbody tr:hover {background:var(--navy-50)}
+
+.entry-table td {padding:4px 6px}
+.entry-table input[type=number] {width:64px;margin:0}
+
+.add-row-bar {
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:16px 20px;border-top:1px solid var(--gray-200);background:var(--gray-50);
+}
+.add-row-label {font-size:.84rem;font-weight:600;color:var(--gray-600)}
+
+/* ── ADMINISTRAÇÃO (liberações temporárias) ──────────────────── */
+.liber-card {
+  background:var(--white);border:1px solid var(--gray-200);border-radius:12px;
+  padding:20px;max-width:560px;
+}
+.liber-card-title {
+  font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;
+  color:var(--gray-400);margin-bottom:14px;
+}
+.liber-form {display:flex;gap:10px;flex-wrap:wrap}
+.liber-input {
+  flex:1;min-width:220px;padding:10px 14px;
+  border:1.5px solid var(--gray-200);border-radius:8px;
+  font-family:var(--font);font-size:.88rem;color:var(--navy-800);outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.liber-input:focus {border-color:var(--navy-500);box-shadow:0 0 0 3px rgba(42,77,118,.12)}
+.liber-status {font-size:.82rem;font-weight:600;margin-top:10px}
+.liber-status.error   {color:var(--danger-600)}
+.liber-status.success {color:var(--success-600)}
+.status-pill {padding:4px 12px;border-radius:20px;font-size:.72rem;font-weight:700;display:inline-block}
+.status-pill.ativa    {background:var(--success-100);color:var(--success-600)}
+.status-pill.expirada {background:var(--gray-100);color:var(--gray-400)}
 
 @media(max-width:900px){
   .app-header{padding:12px 16px}
@@ -272,7 +298,6 @@ input[type=number]:disabled {
   .stat-row{grid-template-columns:1fr 1fr}
   .header-right .period-pill{display:none}
   .emp-dropdown{min-width:220px}
-  .form-body{gap:24px}
 }
 </style>
 </head>
@@ -324,6 +349,10 @@ input[type=number]:disabled {
       </div>
     </div>
     <div class="header-right">
+      <button id="admPageBtn" class="hub-back-btn" type="button" style="display:none" onclick="switchTab('admpage')">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 10a2 2 0 100-4 2 2 0 000 4z" stroke="currentColor" stroke-width="1.5"/><path d="M13 8.6v-1.2l1.3-1-1-1.7-1.5.4a4.9 4.9 0 00-1-.6l-.3-1.5H8.5l-.3 1.5c-.36.14-.7.34-1 .6l-1.5-.4-1 1.7L6 7.4v1.2l-1.3 1 1 1.7 1.5-.4c.3.26.64.46 1 .6l.3 1.5h1.99l.3-1.5c.36-.14.7-.34 1-.6l1.5.4 1-1.7-1.3-1z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+        Liberação
+      </button>
       <a id="hubBackBtn" class="hub-back-btn" href="#" target="_top">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         Hub
@@ -363,120 +392,99 @@ input[type=number]:disabled {
     <!-- Tabs -->
     <div class="tabs-panel">
 
-      <!-- Seletor de unidade (visível só para quem tem acesso a múltiplas) -->
-      <div id="unitSelectorBar" class="unit-bar" style="display:none">
-        <label class="selector-label" style="margin-bottom:6px;display:block">Unidade</label>
-        <select id="mainUnitSel" class="emp-dropdown" onchange="onUnitChange(this.value)">
-        </select>
+      <!-- Filtros: unidade (dropdown multi-seleção, visível só com mais de 1) + ano + mês -->
+      <div class="unit-bar">
+        <div class="filter-row">
+          <div id="unitFilterWrap" style="display:none">
+            <label class="selector-label">Unidades</label>
+            <select id="unitFilterSel" class="emp-dropdown" multiple size="4" style="min-width:200px" onchange="onFilterChange()"></select>
+            <div class="filter-hint">Nenhuma selecionada = todas</div>
+          </div>
+          <div>
+            <label class="selector-label">Ano</label>
+            <select id="yearFilterSel" class="emp-dropdown" style="min-width:140px" onchange="onFilterChange()"></select>
+          </div>
+          <div>
+            <label class="selector-label">Mês</label>
+            <select id="monthFilterSel" class="emp-dropdown" style="min-width:180px" onchange="onFilterChange()"></select>
+          </div>
+        </div>
       </div>
 
       <div class="tabs-nav">
-        <button class="tab-btn active" onclick="switchTab('admin')">
+        <button class="tab-btn active" data-tab="admin" onclick="switchTab('admin')">
           Administrativo <span class="tab-count" id="cAdmin">0</span>
         </button>
-        <button class="tab-btn" onclick="switchTab('docente')">
+        <button class="tab-btn" data-tab="docente" onclick="switchTab('docente')">
           Docente <span class="tab-count" id="cDocente">0</span>
         </button>
       </div>
 
       <!-- ── Administrativo ── -->
       <div id="tabAdmin" class="tab-panel active">
-        <div class="selector-bar">
-          <div>
-            <label class="selector-label">Funcionário</label>
-            <select id="adminEmpSel" class="emp-dropdown" onchange="selectEmp('admin')">
-              <option value="">— Selecione o funcionário —</option>
-            </select>
-          </div>
+        <div id="adminNoSel" class="no-sel-hint" style="display:none">Nenhum lançamento com os filtros atuais. Use "Adicionar" abaixo.</div>
+        <div class="hist-section">
+          <table class="hist-table entry-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Unidade</th><th rowspan="2">Mês</th><th rowspan="2">Ano</th>
+                <th rowspan="2">Matrícula</th><th rowspan="2">Funcionário</th>
+                <th colspan="3">Previsto</th><th colspan="3">Efetivo</th>
+              </tr>
+              <tr><th>8hs</th><th>6hs</th><th>Sáb</th><th>8hs</th><th>6hs</th><th>Sáb</th></tr>
+            </thead>
+            <tbody id="adminTableBody"></tbody>
+          </table>
         </div>
-
-        <div id="adminNoSel" class="no-sel-hint">Selecione um funcionário acima para preencher os dados.</div>
-
-        <div id="adminFormCard" class="emp-form-card" style="display:none">
-          <div class="form-card-header">
-            <div class="form-emp-name" id="adminFormName"></div>
-            <div class="form-emp-mat"  id="adminFormMat"></div>
-          </div>
-          <div class="form-body">
-            <div class="field-group">
-              <div class="field-group-title">Previsto</div>
-              <div class="field-row">
-                <span class="field-lbl">8hs</span>
-                <input type="number" id="af_p8" min="0" step="1" value="0">
-              </div>
-              <div class="field-row">
-                <span class="field-lbl">6hs</span>
-                <input type="number" id="af_p6" min="0" step="1" value="0">
-              </div>
-              <div class="field-row">
-                <span class="field-lbl">Sáb</span>
-                <input type="number" id="af_ps" min="0" step="1" value="0">
-              </div>
-            </div>
-            <div class="field-group">
-              <div class="field-group-title">Efetivo</div>
-              <div class="field-row">
-                <span class="field-lbl">8hs</span>
-                <input type="number" id="af_e8" min="0" step="1" value="0">
-              </div>
-              <div class="field-row">
-                <span class="field-lbl">6hs</span>
-                <input type="number" id="af_e6" min="0" step="1" value="0">
-              </div>
-              <div class="field-row">
-                <span class="field-lbl">Sáb</span>
-                <input type="number" id="af_es" min="0" step="1" value="0">
-              </div>
-            </div>
-          </div>
+        <div id="adminAddBar" class="add-row-bar">
+          <select id="adminAddUnit" class="emp-dropdown" style="min-width:180px" onchange="populateAddEmpDropdown('admin')"></select>
+          <select id="adminAddEmp" class="emp-dropdown" style="min-width:260px"></select>
+          <button class="save-btn" onclick="addRow('admin')">+ Adicionar</button>
         </div>
-
       </div>
 
       <!-- ── Docente ── -->
       <div id="tabDocente" class="tab-panel">
-        <div class="selector-bar">
-          <div>
-            <label class="selector-label">Funcionário</label>
-            <select id="docenteEmpSel" class="emp-dropdown" onchange="selectEmp('docente')">
-              <option value="">— Selecione o funcionário —</option>
-            </select>
-          </div>
+        <div id="docenteNoSel" class="no-sel-hint" style="display:none">Nenhum lançamento com os filtros atuais. Use "Adicionar" abaixo.</div>
+        <div class="hist-section">
+          <table class="hist-table entry-table">
+            <thead>
+              <tr>
+                <th rowspan="2">Unidade</th><th rowspan="2">Mês</th><th rowspan="2">Ano</th>
+                <th rowspan="2">Matrícula</th><th rowspan="2">Funcionário</th>
+                <th colspan="2">Carga Horária</th><th colspan="2">Dias Trabalhados</th>
+              </tr>
+              <tr><th>Previsto</th><th>Efetivo</th><th>Previsto</th><th>Efetivo</th></tr>
+            </thead>
+            <tbody id="docenteTableBody"></tbody>
+          </table>
         </div>
-
-        <div id="docenteNoSel" class="no-sel-hint">Selecione um funcionário acima para preencher os dados.</div>
-
-        <div id="docenteFormCard" class="emp-form-card" style="display:none">
-          <div class="form-card-header">
-            <div class="form-emp-name" id="docenteFormName"></div>
-            <div class="form-emp-mat"  id="docenteFormMat"></div>
-          </div>
-          <div class="form-body">
-            <div class="field-group">
-              <div class="field-group-title">Carga Horária</div>
-              <div class="field-row">
-                <span class="field-lbl">Previsto</span>
-                <input type="number" id="df_chp" min="0" step="1" value="0">
-              </div>
-              <div class="field-row">
-                <span class="field-lbl">Efetivo</span>
-                <input type="number" id="df_che" min="0" step="1" value="0">
-              </div>
-            </div>
-            <div class="field-group">
-              <div class="field-group-title">Dias Trabalhados</div>
-              <div class="field-row">
-                <span class="field-lbl">Previsto</span>
-                <input type="number" id="df_dp" min="0" step="1" value="0">
-              </div>
-              <div class="field-row">
-                <span class="field-lbl">Efetivo</span>
-                <input type="number" id="df_de" min="0" step="1" value="0">
-              </div>
-            </div>
-          </div>
+        <div id="docenteAddBar" class="add-row-bar">
+          <select id="docenteAddUnit" class="emp-dropdown" style="min-width:180px" onchange="populateAddEmpDropdown('docente')"></select>
+          <select id="docenteAddEmp" class="emp-dropdown" style="min-width:260px"></select>
+          <button class="save-btn" onclick="addRow('docente')">+ Adicionar</button>
         </div>
+      </div>
 
+      <!-- ── Administração (só admin) ── -->
+      <div id="tabAdmPage" class="tab-panel">
+        <div class="hist-section">
+          <div class="liber-card">
+            <div class="liber-card-title">Nova Liberação (24h)</div>
+            <div class="liber-form">
+              <input type="email" id="liberEmailInput" class="liber-input" placeholder="e-mail do usuário" onkeydown="if(event.key==='Enter') criarLiberacao()">
+              <button class="save-btn" onclick="criarLiberacao()">Liberar 24h</button>
+            </div>
+            <div id="liberStatus" class="liber-status"></div>
+          </div>
+
+          <table class="hist-table" style="margin-top:24px">
+            <thead>
+              <tr><th>E-mail</th><th>Liberado por</th><th>Expira em</th><th>Status</th></tr>
+            </thead>
+            <tbody id="liberacoesBody"></tbody>
+          </table>
+        </div>
       </div>
 
     </div>
@@ -501,19 +509,19 @@ var HUB_URL = 'https://script.google.com/a/macros/brasas.com/s/AKfycbyF7BArYMYFt
 document.getElementById('hubBackBtn').href = HUB_URL;
 
 var state = {
-  user: null, period: null, funcs: null, vrData: null, counter: 0,
-  availableUnits: [], selectedUnit: null,
-  pendingAdmin: {}, pendingDocente: {},
-  currentAdminKey: null, currentDocenteKey: null  // chave composta "unidade|matricula"
+  user: null, period: null, funcs: null, counter: 0,
+  availableUnits: [],
+  unitFilter: [],   // vazio = mostra todas as unidades permitidas
+  yearFilter: '',   // vazio = mostra todos os anos
+  monthFilter: '',  // vazio = mostra todos os meses (número 1-12)
+  adminRows: [], docenteRows: []
 };
 
 var MESES = ['01 Janeiro','02 Fevereiro','03 Março','04 Abril','05 Maio','06 Junho',
              '07 Julho','08 Agosto','09 Setembro','10 Outubro','11 Novembro','12 Dezembro'];
 
-function makeKey(unidade, matricula) { return unidade + '|' + matricula; }
-function parseKey(key) {
-  var idx = key.indexOf('|');
-  return { unidade: key.slice(0, idx), matricula: key.slice(idx + 1) };
+function normStr(s) {
+  return String(s || '').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 }
 
 // ── INIT ────────────────────────────────────────────────────
@@ -541,12 +549,10 @@ function onUnidadesLoaded(units) {
     showError(new Error('Nenhuma unidade disponível para este usuário.'));
     return;
   }
-  // Auto-seleciona a primeira; o seletor aparece no painel para quem tem múltiplas
-  state.selectedUnit = state.availableUnits[0];
   google.script.run
     .withSuccessHandler(onPeriodLoaded)
     .withFailureHandler(showError)
-    .getCurrentPeriod();
+    .getCurrentPeriod(TOKEN);
 }
 
 function onPeriodLoaded(period) {
@@ -554,7 +560,7 @@ function onPeriodLoaded(period) {
   google.script.run
     .withSuccessHandler(onFuncsLoaded)
     .withFailureHandler(showError)
-    .getFuncionarios(state.selectedUnit);
+    .getFuncionarios(TOKEN);
 }
 
 function onFuncsLoaded(funcs) {
@@ -562,84 +568,13 @@ function onFuncsLoaded(funcs) {
   google.script.run
     .withSuccessHandler(onVRLoaded)
     .withFailureHandler(showError)
-    .getVRData(state.selectedUnit,
-               state.period.efetivo.mes,  state.period.efetivo.ano,
-               state.period.previsto.mes, state.period.previsto.ano);
+    .getVRData(TOKEN);
 }
 
-function onVRLoaded(vrData) {
-  state.vrData        = vrData;
-  state.pendingAdmin  = {};
-  state.pendingDocente = {};
-
-  state.funcs.administrativo.forEach(function(emp) {
-    var key = makeKey(emp.unidade, emp.matricula);
-    var d   = state.vrData.adminMap[emp.matricula] || {};
-    state.pendingAdmin[key] = {
-      previsto8hs: d.previsto8hs || 0, previsto6hs: d.previsto6hs || 0,
-      previstoSab: d.previstoSab || 0, efetivo8hs:  d.efetivo8hs  || 0,
-      efetivo6hs:  d.efetivo6hs  || 0, efetivoSab:  d.efetivoSab  || 0
-    };
-  });
-  state.funcs.docente.forEach(function(emp) {
-    var key = makeKey(emp.unidade, emp.matricula);
-    var d   = state.vrData.docenteMap[emp.matricula] || {};
-    state.pendingDocente[key] = {
-      chPrevisto: d.chPrevisto || 0, chEfetivo:    d.chEfetivo    || 0,
-      diasPrevisto: d.diasPrevisto || 0, diasEfetivo: d.diasEfetivo || 0
-    };
-  });
-
-  var mainAlreadyVisible = document.getElementById('screenMain').style.display === 'flex';
-  if (mainAlreadyVisible) {
-    refreshEmployees();
-  } else {
-    renderUI();
-  }
-}
-
-function refreshEmployees() {
-  var total = state.funcs.administrativo.length + state.funcs.docente.length;
-  document.getElementById('cAdmin').textContent   = state.funcs.administrativo.length;
-  document.getElementById('cDocente').textContent = state.funcs.docente.length;
-  document.getElementById('sTotal').textContent   = total;
-  document.getElementById('hUnidade').textContent = state.selectedUnit;
-  document.getElementById('sUnidade').textContent = state.selectedUnit;
-  var mainSel = document.getElementById('mainUnitSel');
-  if (mainSel) mainSel.value = state.selectedUnit;
-  populateDropdown('admin');
-  populateDropdown('docente');
-}
-
-// ── TROCA DE UNIDADE ─────────────────────────────────────────
-
-function onUnitChange(unit) {
-  if (unit === state.selectedUnit) return;
-  state.selectedUnit      = unit;
-  state.funcs             = null;
-  state.vrData            = null;
-  state.pendingAdmin      = {};
-  state.pendingDocente    = {};
-  state.currentAdminKey   = null;
-  state.currentDocenteKey = null;
-
-  ['admin','docente'].forEach(function(t) {
-    var a = t === 'admin';
-    document.getElementById(a ? 'adminFormCard' : 'docenteFormCard').style.display = 'none';
-    document.getElementById(a ? 'adminNoSel'   : 'docenteNoSel').style.display    = '';
-    document.getElementById(a ? 'adminEmpSel'  : 'docenteEmpSel').innerHTML       =
-      '<option value="">Carregando...</option>';
-  });
-
-  document.getElementById('hUnidade').textContent = unit;
-  document.getElementById('sUnidade').textContent = unit;
-
-  // Reutiliza a mesma cadeia do carregamento inicial
-  // onVRLoaded detecta que o app já está visível e chama refreshEmployees() em vez de renderUI()
-  google.script.run
-    .withSuccessHandler(onFuncsLoaded)
-    .withFailureHandler(showError)
-    .getFuncionarios(unit);
+function onVRLoaded(data) {
+  state.adminRows   = data.administrativo || [];
+  state.docenteRows = data.docente        || [];
+  renderUI();
 }
 
 // ── RENDER ──────────────────────────────────────────────────
@@ -647,13 +582,11 @@ function onUnitChange(unit) {
 function renderUI() {
   var u = state.user;
   var p = state.period;
-  var total = state.funcs.administrativo.length + state.funcs.docente.length;
   var periodoStr = MESES[p.previsto.mes - 1] + ' / ' + p.previsto.ano;
 
   document.getElementById('hPeriodo').textContent = periodoStr;
   document.getElementById('sPeriodo').textContent  = periodoStr;
   document.getElementById('hNome').textContent    = u.nome;
-  document.getElementById('hUnidade').textContent = state.selectedUnit;
 
   var badge = document.getElementById('hBadge');
   badge.style.display = '';
@@ -667,133 +600,221 @@ function renderUI() {
     document.getElementById('saveBtn').style.display = '';
   }
 
-  document.getElementById('sUnidade').textContent = state.selectedUnit || '—';
+  document.getElementById('admPageBtn').style.display = (u.role === 'admin') ? '' : 'none';
 
-  // Seletor de unidade dentro do painel (visível só para múltiplas unidades)
-  var unitBar = document.getElementById('unitSelectorBar');
-  if (state.availableUnits.length > 1) {
-    var uOpts = state.availableUnits.map(function(un) {
-      return '<option value="' + esc(un) + '"' + (un === state.selectedUnit ? ' selected' : '') + '>' + esc(un) + '</option>';
-    }).join('');
-    document.getElementById('mainUnitSel').innerHTML = uOpts;
-    unitBar.style.display = '';
-  } else {
-    unitBar.style.display = 'none';
-  }
-
-  document.getElementById('sTotal').textContent   = total;
-  document.getElementById('cAdmin').textContent   = state.funcs.administrativo.length;
-  document.getElementById('cDocente').textContent = state.funcs.docente.length;
-
-  populateDropdown('admin');
-  populateDropdown('docente');
+  renderFilterBar();
+  renderUnitLabel();
+  renderCounts();
+  renderAdminTable();
+  renderDocenteTable();
 
   hideAll();
   document.getElementById('screenMain').style.display = 'flex';
 }
 
-function populateDropdown(type) {
-  var isAdmin = type === 'admin';
-  var sel     = document.getElementById(isAdmin ? 'adminEmpSel' : 'docenteEmpSel');
-  var emps    = isAdmin ? state.funcs.administrativo : state.funcs.docente;
-  var locked  = state.period.locked;
+// ── FILTROS (unidade multi-seleção + mês) ─────────────────────
 
-  if (!emps.length) {
-    document.getElementById(isAdmin ? 'adminNoSel' : 'docenteNoSel').textContent =
-      'Nenhum funcionário cadastrado — use o botão abaixo para adicionar manualmente.';
-    sel.disabled = true;
-    return;
+function renderFilterBar() {
+  var wrap = document.getElementById('unitFilterWrap');
+  if (state.availableUnits.length > 1) {
+    wrap.style.display = '';
+    document.getElementById('unitFilterSel').innerHTML = state.availableUnits.map(function(un) {
+      var selected = state.unitFilter.indexOf(un) !== -1;
+      return '<option value="' + esc(un) + '"' + (selected ? ' selected' : '') + '>' + esc(un) + '</option>';
+    }).join('');
+  } else {
+    wrap.style.display = 'none';
   }
 
-  // Usa chave composta "unidade|matricula" para evitar colisão entre unidades
-  var opts = '<option value="">— Selecione o funcionário —</option>';
-  emps.forEach(function(emp) {
-    var key = makeKey(emp.unidade, emp.matricula);
-    opts += '<option value="' + esc(key) + '">' + esc(emp.nome) + '</option>';
-  });
-  sel.innerHTML = opts;
-  sel.disabled  = !!locked;
+  var yearSel = document.getElementById('yearFilterSel');
+  var years   = distinctYears();
+  yearSel.innerHTML = '<option value="">Todos os anos</option>' + years.map(function(y) {
+    return '<option value="' + y + '"' + (String(state.yearFilter) === String(y) ? ' selected' : '') + '>' + y + '</option>';
+  }).join('');
+
+  var monthSel = document.getElementById('monthFilterSel');
+  monthSel.innerHTML = '<option value="">Todos os meses</option>' + MESES.map(function(m, i) {
+    var val = i + 1;
+    return '<option value="' + val + '"' + (String(state.monthFilter) === String(val) ? ' selected' : '') + '>' + esc(m) + '</option>';
+  }).join('');
 }
 
-// ── SELEÇÃO DE FUNCIONÁRIO ───────────────────────────────────
+function distinctYears() {
+  var set = {};
+  state.adminRows.concat(state.docenteRows).forEach(function(r) { set[r.ano] = true; });
+  return Object.keys(set).map(Number).sort(function(a, b) { return a - b; });
+}
 
-function selectEmp(type) {
+function onFilterChange() {
+  var unitSel = document.getElementById('unitFilterSel');
+  state.unitFilter = Array.prototype.slice.call(unitSel.selectedOptions).map(function(o) { return o.value; });
+
+  state.yearFilter  = document.getElementById('yearFilterSel').value;
+  state.monthFilter = document.getElementById('monthFilterSel').value;
+
+  renderUnitLabel();
+  renderCounts();
+  renderAdminTable();
+  renderDocenteTable();
+}
+
+function visibleUnits() { return state.unitFilter.length ? state.unitFilter : state.availableUnits; }
+
+function passesFilter(r) {
+  var units = visibleUnits().map(normStr);
+  if (units.indexOf(normStr(r.unidade)) === -1) return false;
+  if (state.yearFilter  && Number(state.yearFilter)  !== r.ano) return false;
+  if (state.monthFilter && Number(state.monthFilter) !== r.mes) return false;
+  return true;
+}
+
+function renderUnitLabel() {
+  var list  = visibleUnits();
+  var label = list.length === 1 ? list[0] : (list.length + ' unidades');
+  document.getElementById('hUnidade').textContent = label;
+  document.getElementById('sUnidade').textContent = label;
+}
+
+function renderCounts() {
+  var units   = visibleUnits().map(normStr);
+  var admin   = state.funcs.administrativo.filter(function(e) { return units.indexOf(normStr(e.unidade)) !== -1; });
+  var docente = state.funcs.docente.filter(function(e) { return units.indexOf(normStr(e.unidade)) !== -1; });
+  document.getElementById('cAdmin').textContent   = admin.length;
+  document.getElementById('cDocente').textContent = docente.length;
+  document.getElementById('sTotal').textContent   = admin.length + docente.length;
+}
+
+// ── TABELAS DE PREENCHIMENTO (mostra só o que já foi lançado; "+ Adicionar" cria linha nova) ──
+
+function numField(cls, val, editable) {
+  return '<td><input type="number" class="' + cls + '" min="0" step="1" value="' +
+    (Number(val) || 0) + '"' + (editable ? '' : ' disabled') + '></td>';
+}
+
+function isSamePeriod(r, target) { return r.mes === target.mes && r.ano === target.ano; }
+
+function renderAdminTable() {
+  var rows = state.adminRows.filter(passesFilter);
+  var p    = state.period;
+  var body = document.getElementById('adminTableBody');
+
+  document.getElementById('adminNoSel').style.display = rows.length ? 'none' : '';
+
+  body.innerHTML = rows.map(function(r) {
+    var prevOpen = !p.locked && isSamePeriod(r, p.previsto);
+    var efetOpen = !p.locked && isSamePeriod(r, p.efetivo);
+    return '<tr>' +
+      '<td>' + esc(r.unidade) + '</td>' +
+      '<td>' + esc(MESES[r.mes - 1]) + '</td><td>' + r.ano + '</td>' +
+      '<td>' + esc(r.matricula) + '</td><td>' + esc(r.nome) + '</td>' +
+      numField('ef-p8', r.previsto8hs, prevOpen) + numField('ef-p6', r.previsto6hs, prevOpen) + numField('ef-ps', r.previstoSab, prevOpen) +
+      numField('ef-e8', r.efetivo8hs,  efetOpen)  + numField('ef-e6', r.efetivo6hs,  efetOpen)  + numField('ef-es', r.efetivoSab,  efetOpen) +
+      '</tr>';
+  }).join('');
+
+  renderAddControl('admin');
+}
+
+function renderDocenteTable() {
+  var rows = state.docenteRows.filter(passesFilter);
+  var p    = state.period;
+  var body = document.getElementById('docenteTableBody');
+
+  document.getElementById('docenteNoSel').style.display = rows.length ? 'none' : '';
+
+  body.innerHTML = rows.map(function(r) {
+    var prevOpen = !p.locked && isSamePeriod(r, p.previsto);
+    var efetOpen = !p.locked && isSamePeriod(r, p.efetivo);
+    return '<tr>' +
+      '<td>' + esc(r.unidade) + '</td>' +
+      '<td>' + esc(MESES[r.mes - 1]) + '</td><td>' + r.ano + '</td>' +
+      '<td>' + esc(r.matricula) + '</td><td>' + esc(r.nome) + '</td>' +
+      numField('df-chp', r.chPrevisto,   prevOpen) + numField('df-che', r.chEfetivo,   efetOpen) +
+      numField('df-dp',  r.diasPrevisto, prevOpen) + numField('df-de',  r.diasEfetivo, efetOpen) +
+      '</tr>';
+  }).join('');
+
+  renderAddControl('docente');
+}
+
+// ── ADICIONAR FUNCIONÁRIO (só para o Previsto do mês seguinte — o Efetivo do mês
+//    vigente já existe, criado como Previsto no ciclo anterior, e só precisa ser editado) ──
+
+function renderAddControl(type) {
   var isAdmin = type === 'admin';
-  var sel     = document.getElementById(isAdmin ? 'adminEmpSel' : 'docenteEmpSel');
-  var key     = sel.value;
+  var bar     = document.getElementById(isAdmin ? 'adminAddBar' : 'docenteAddBar');
 
-  flushForm(type);
+  if (state.period.locked) { bar.style.display = 'none'; return; }
+  bar.style.display = 'flex';
 
-  var noSelId = isAdmin ? 'adminNoSel'    : 'docenteNoSel';
-  var cardId  = isAdmin ? 'adminFormCard' : 'docenteFormCard';
-  var nameId  = isAdmin ? 'adminFormName' : 'docenteFormName';
-  var matId   = isAdmin ? 'adminFormMat'  : 'docenteFormMat';
+  // Restrito às unidades visíveis no filtro atual, senão a linha adicionada ficaria escondida
+  var choices = visibleUnits();
+  var unitSel = document.getElementById(isAdmin ? 'adminAddUnit' : 'docenteAddUnit');
+  var prevVal = unitSel.value;
+  unitSel.innerHTML = choices.map(function(un) {
+    return '<option value="' + esc(un) + '">' + esc(un) + '</option>';
+  }).join('');
+  if (prevVal && choices.indexOf(prevVal) !== -1) unitSel.value = prevVal;
 
-  if (!key) {
-    if (isAdmin) state.currentAdminKey   = null;
-    else         state.currentDocenteKey = null;
-    document.getElementById(noSelId).style.display = '';
-    document.getElementById(cardId).style.display  = 'none';
+  populateAddEmpDropdown(type);
+}
+
+function populateAddEmpDropdown(type) {
+  var isAdmin = type === 'admin';
+  var unitSel = document.getElementById(isAdmin ? 'adminAddUnit' : 'docenteAddUnit');
+  var empSel  = document.getElementById(isAdmin ? 'adminAddEmp'  : 'docenteAddEmp');
+  var unidade = normStr(unitSel.value);
+  var target  = state.period.previsto;
+  var rows    = isAdmin ? state.adminRows : state.docenteRows;
+
+  var already = {};
+  rows.forEach(function(r) {
+    if (isSamePeriod(r, target) && normStr(r.unidade) === unidade) already[r.matricula] = true;
+  });
+
+  var allEmps = (isAdmin ? state.funcs.administrativo : state.funcs.docente)
+    .filter(function(e) { return normStr(e.unidade) === unidade; });
+  var emps = allEmps.filter(function(e) { return !already[e.matricula]; });
+
+  if (!allEmps.length) {
+    empSel.innerHTML = '<option value="">— Nenhum funcionário cadastrado nesta unidade —</option>';
+    empSel.disabled  = true;
     return;
   }
+  if (!emps.length) {
+    empSel.innerHTML = '<option value="">— Todos já lançados neste mês —</option>';
+    empSel.disabled  = true;
+    return;
+  }
+  empSel.disabled  = false;
+  empSel.innerHTML = '<option value="">— Selecione o funcionário —</option>' +
+    emps.map(function(e) { return '<option value="' + esc(e.matricula) + '">' + esc(e.nome) + '</option>'; }).join('');
+}
 
-  var parsed = parseKey(key);
-  var emps   = isAdmin ? state.funcs.administrativo : state.funcs.docente;
-  var emp    = null;
-  emps.forEach(function(e) {
-    if (e.matricula === parsed.matricula && e.unidade === parsed.unidade) emp = e;
-  });
+function addRow(type) {
+  var isAdmin = type === 'admin';
+  var unitSel = document.getElementById(isAdmin ? 'adminAddUnit' : 'docenteAddUnit');
+  var empSel  = document.getElementById(isAdmin ? 'adminAddEmp'  : 'docenteAddEmp');
+  var unidade = unitSel.value;
+  var mat     = empSel.value;
+  if (!unidade || !mat) return;
+
+  var emps = isAdmin ? state.funcs.administrativo : state.funcs.docente;
+  var emp  = emps.filter(function(e) { return e.matricula === mat && normStr(e.unidade) === normStr(unidade); })[0];
   if (!emp) return;
 
-  var locked = state.period.locked;
-  var d;
+  var target = state.period.previsto;
+  var rows   = isAdmin ? state.adminRows : state.docenteRows;
 
-  if (isAdmin) {
-    state.currentAdminKey = key;
-    d = state.pendingAdmin[key] || {};
-    document.getElementById(nameId).textContent = emp.nome;
-    document.getElementById(matId).textContent  = 'Matrícula: ' + emp.matricula;
-    setVal('af_p8', d.previsto8hs, locked); setVal('af_p6', d.previsto6hs, locked);
-    setVal('af_ps', d.previstoSab, locked); setVal('af_e8', d.efetivo8hs,  locked);
-    setVal('af_e6', d.efetivo6hs,  locked); setVal('af_es', d.efetivoSab,  locked);
-  } else {
-    state.currentDocenteKey = key;
-    d = state.pendingDocente[key] || {};
-    document.getElementById(nameId).textContent = emp.nome;
-    document.getElementById(matId).textContent  = 'Matrícula: ' + emp.matricula;
-    setVal('df_chp', d.chPrevisto,   locked); setVal('df_che', d.chEfetivo,    locked);
-    setVal('df_dp',  d.diasPrevisto, locked); setVal('df_de',  d.diasEfetivo,  locked);
-  }
+  rows.push(isAdmin
+    ? { unidade: unidade, mes: target.mes, ano: target.ano, matricula: emp.matricula, nome: emp.nome,
+        previsto8hs:0, previsto6hs:0, previstoSab:0, efetivo8hs:0, efetivo6hs:0, efetivoSab:0 }
+    : { unidade: unidade, mes: target.mes, ano: target.ano, matricula: emp.matricula, nome: emp.nome,
+        chPrevisto:0, chEfetivo:0, diasPrevisto:0, diasEfetivo:0 });
 
-  document.getElementById(noSelId).style.display = 'none';
-  document.getElementById(cardId).style.display  = '';
-}
+  rows.sort(function(a, b) { return (a.ano - b.ano) || (a.mes - b.mes) || a.unidade.localeCompare(b.unidade, 'pt-BR') || a.nome.localeCompare(b.nome, 'pt-BR'); });
 
-function setVal(id, v, locked) {
-  var el = document.getElementById(id);
-  if (!el) return;
-  el.value    = (v !== undefined && v !== null) ? Number(v) : 0;
-  el.disabled = !!locked;
-}
-
-function flushForm(type) {
-  var isAdmin = type === 'admin';
-  if (isAdmin) {
-    var key = state.currentAdminKey;
-    if (!key) return;
-    state.pendingAdmin[key] = {
-      previsto8hs: numVal('af_p8'), previsto6hs: numVal('af_p6'),
-      previstoSab: numVal('af_ps'), efetivo8hs:  numVal('af_e8'),
-      efetivo6hs:  numVal('af_e6'), efetivoSab:  numVal('af_es')
-    };
-  } else {
-    var key = state.currentDocenteKey;
-    if (!key) return;
-    state.pendingDocente[key] = {
-      chPrevisto:   numVal('df_chp'), chEfetivo:    numVal('df_che'),
-      diasPrevisto: numVal('df_dp'),  diasEfetivo:  numVal('df_de')
-    };
-  }
+  if (isAdmin) renderAdminTable(); else renderDocenteTable();
 }
 
 
@@ -802,72 +823,145 @@ function flushForm(type) {
 function switchTab(tab) {
   var btns   = document.querySelectorAll('.tab-btn');
   var panels = document.querySelectorAll('.tab-panel');
-  btns.forEach(function(b)   { b.classList.remove('active'); });
+  btns.forEach(function(b) { b.classList.toggle('active', b.getAttribute('data-tab') === tab); });
   panels.forEach(function(p) { p.classList.remove('active'); });
-  if (tab === 'admin') {
-    btns[0].classList.add('active');
-    document.getElementById('tabAdmin').classList.add('active');
-  } else {
-    btns[1].classList.add('active');
-    document.getElementById('tabDocente').classList.add('active');
+
+  var panelId = tab === 'admin' ? 'tabAdmin' : (tab === 'docente' ? 'tabDocente' : 'tabAdmPage');
+  document.getElementById(panelId).classList.add('active');
+
+  if (tab === 'admpage') loadLiberacoes();
+}
+
+// ── ADMINISTRAÇÃO (liberações temporárias de edição) ──────────
+
+function loadLiberacoes() {
+  document.getElementById('liberacoesBody').innerHTML =
+    '<tr><td colspan="4" style="text-align:center;color:var(--gray-400)">Carregando...</td></tr>';
+  google.script.run
+    .withSuccessHandler(renderLiberacoes)
+    .withFailureHandler(showError)
+    .getLiberacoes(TOKEN);
+}
+
+function renderLiberacoes(list) {
+  var body = document.getElementById('liberacoesBody');
+  if (!list || !list.length) {
+    body.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray-400)">Nenhuma liberação concedida ainda</td></tr>';
+    return;
   }
+  var now = new Date();
+  body.innerHTML = list.map(function(l) {
+    var ativa = new Date(l.expiraEm) > now;
+    return '<tr><td style="text-align:left">' + esc(l.email) + '</td><td style="text-align:left">' + esc(l.liberadoPor) + '</td>' +
+      '<td>' + fmtDateTime(l.expiraEm) + '</td>' +
+      '<td><span class="status-pill ' + (ativa ? 'ativa">Ativa' : 'expirada">Expirada') + '</span></td></tr>';
+  }).join('');
+}
+
+function fmtDateTime(d) {
+  d = new Date(d);
+  var pad = function(n) { return n < 10 ? '0' + n : n; };
+  return pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+function criarLiberacao() {
+  var input = document.getElementById('liberEmailInput');
+  var email = input.value.trim();
+  var status = document.getElementById('liberStatus');
+
+  if (!email || email.indexOf('@') === -1) {
+    status.textContent = 'Informe um e-mail válido.';
+    status.className   = 'liber-status error';
+    return;
+  }
+
+  status.textContent = 'Liberando...';
+  status.className   = 'liber-status';
+
+  google.script.run
+    .withSuccessHandler(function(list) {
+      input.value = '';
+      status.textContent = 'Liberação de 24h concedida com sucesso!';
+      status.className   = 'liber-status success';
+      renderLiberacoes(list);
+    })
+    .withFailureHandler(function(err) {
+      status.textContent = 'Erro: ' + (err.message || err);
+      status.className   = 'liber-status error';
+    })
+    .criarLiberacao(TOKEN, email);
 }
 
 // ── SAVE ────────────────────────────────────────────────────
 
-function saveData() {
-  // Garante que o formulário atual está no estado pendente
-  flushForm('admin');
-  flushForm('docente');
+function rowVal(row, cls) {
+  var el = row.querySelector('.' + cls);
+  return el ? (Number(el.value) || 0) : 0;
+}
 
+function isOpenPeriod(r) {
+  var p = state.period;
+  return isSamePeriod(r, p.efetivo) || isSamePeriod(r, p.previsto);
+}
+
+function saveData() {
   setStatus('Salvando...', 'saving');
   document.getElementById('saveBtn').disabled = true;
 
-  var adminEmps = state.funcs.administrativo.map(function(emp) {
-    var d = state.pendingAdmin[makeKey(emp.unidade, emp.matricula)] || {};
-    return { matricula: emp.matricula, nome: emp.nome,
-      previsto8hs: d.previsto8hs||0, previsto6hs: d.previsto6hs||0, previstoSab: d.previstoSab||0,
-      efetivo8hs:  d.efetivo8hs||0,  efetivo6hs:  d.efetivo6hs||0,  efetivoSab:  d.efetivoSab||0 };
+  // Importante: usa os MESMOS índices que renderAdminTable/renderDocenteTable usaram pra desenhar
+  // (rows filtradas), já que as linhas no DOM só existem para o que passou no filtro atual.
+  var adminRowsFiltered = state.adminRows.filter(passesFilter);
+  var adminRowEls = document.querySelectorAll('#adminTableBody tr');
+  var adminEmps = [];
+  adminRowsFiltered.forEach(function(r, i) {
+    if (!isOpenPeriod(r)) return; // só envia o que está no período aberto
+    var row = adminRowEls[i];
+    adminEmps.push({
+      unidade: r.unidade, matricula: r.matricula, nome: r.nome, mes: r.mes, ano: r.ano,
+      previsto8hs: rowVal(row,'ef-p8'), previsto6hs: rowVal(row,'ef-p6'), previstoSab: rowVal(row,'ef-ps'),
+      efetivo8hs:  rowVal(row,'ef-e8'), efetivo6hs:  rowVal(row,'ef-e6'), efetivoSab:  rowVal(row,'ef-es')
+    });
   });
 
-  var docenteEmps = state.funcs.docente.map(function(emp) {
-    var d = state.pendingDocente[makeKey(emp.unidade, emp.matricula)] || {};
-    return { matricula: emp.matricula, nome: emp.nome,
-      chPrevisto: d.chPrevisto||0, chEfetivo: d.chEfetivo||0,
-      diasPrevisto: d.diasPrevisto||0, diasEfetivo: d.diasEfetivo||0 };
+  var docenteRowsFiltered = state.docenteRows.filter(passesFilter);
+  var docenteRowEls = document.querySelectorAll('#docenteTableBody tr');
+  var docenteEmps = [];
+  docenteRowsFiltered.forEach(function(r, i) {
+    if (!isOpenPeriod(r)) return;
+    var row = docenteRowEls[i];
+    docenteEmps.push({
+      unidade: r.unidade, matricula: r.matricula, nome: r.nome, mes: r.mes, ano: r.ano,
+      chPrevisto: rowVal(row,'df-chp'), chEfetivo: rowVal(row,'df-che'),
+      diasPrevisto: rowVal(row,'df-dp'), diasEfetivo: rowVal(row,'df-de')
+    });
   });
 
   google.script.run
     .withSuccessHandler(function() {
       setStatus('Dados salvos com sucesso!', 'success');
       document.getElementById('saveBtn').disabled = false;
+      reloadData();
     })
     .withFailureHandler(function(err) {
       setStatus('Erro: ' + (err.message || err), 'error');
       document.getElementById('saveBtn').disabled = false;
     })
     .saveVRData({
-      unidade:    state.selectedUnit,
-      efetivoMes: state.period.efetivo.mes,
-      efetivoAno: state.period.efetivo.ano,
-      previsoMes:  state.period.previsto.mes,
-      previsoAno:  state.period.previsto.ano,
+      token: TOKEN,
       administrativo: adminEmps,
-      docente:        docenteEmps
+      docente: docenteEmps
     });
 }
 
+// Recarrega os dados após salvar, para refletir o estado real da planilha
+function reloadData() {
+  google.script.run
+    .withSuccessHandler(onVRLoaded)
+    .withFailureHandler(showError)
+    .getVRData(TOKEN);
+}
+
 // ── UTILS ───────────────────────────────────────────────────
-
-function numVal(id) {
-  var el = document.getElementById(id);
-  return el ? (Number(el.value) || 0) : 0;
-}
-
-function val(id) {
-  var el = document.getElementById(id);
-  return el ? (Number(el.value) || 0) : 0;
-}
 
 function esc(s) {
   return String(s)
